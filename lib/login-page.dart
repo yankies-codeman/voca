@@ -53,12 +53,12 @@ class _LoginPageState extends State<LoginPage> {
         shadowColor: Colors.lightBlueAccent.shade100,
         elevation: 5.0,
         child: MaterialButton(
+          color:  Colors.lightBlueAccent,
           minWidth: 200.0,
           height : 42.0,
           onPressed: (){
 
-          },
-          color:  Colors.lightBlueAccent,
+          },         
           child: Text('Log In', style: TextStyle(color: Colors.white)),
         ),  
       ),
