@@ -1,4 +1,4 @@
-name: voca
+name: Voca
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -24,6 +24,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  flutter_launcher_icons: "^0.6.1"
+
+flutter_icons:
+  image_path: "assets/images/robot.png"
+  android: true
+  ios: true
+  #image_path_android: "assets/robot.png"
+  #image_path_ios: "assets/icon/icon_ios.png"
+  #adaptive_icon_background: "#FFFAFAFA"
+  #adaptive_icon_foreground: "assets/icon/icon-foreground.png"
+   #extra config
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -36,7 +48,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-   - assets/robot.png
+   - assets/images/robot.png
   fonts:
     - family: Nunito
       fonts:
