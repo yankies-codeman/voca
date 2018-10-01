@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import './pages/login-page.dart';
+import './pages/home-page.dart';
+import './pages/signUp-page.dart';
+
 
 void main() => runApp(new MyApp());
 
@@ -22,7 +25,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: LoginPage()
+      home: LoginPage(),
+      routes: <String, WidgetBuilder>{
+        '/homepage': (BuildContext context) => HomePage(),
+        '/signuppage': (BuildContext context) => SignUpPage(),
+        '/landingpage': (BuildContext context) => LoginPage(),
+      },
     );
   }
 }
