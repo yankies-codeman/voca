@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
@@ -9,6 +11,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+
+    String _email;
+    String _password;
 
     final logo = new Hero(
       tag: 'hero',
@@ -30,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(32.0)
         )
       ),
+     
     );
 
     final password = TextFormField(
@@ -57,7 +63,15 @@ class _LoginPageState extends State<LoginPage> {
           minWidth: 200.0,
           height : 42.0,
           onPressed: (){
-
+            FirebaseAuth.instance
+                .signInWithEmailAndPassword(
+                    email: _email,
+                    password : _password
+                ).then((FirebaseUser user){
+                     Navigator.of(context).pushReplacementNamed('/homepage');
+                }).catchError((e){
+                  print(e);
+                });
           },         
           child: Text('Log In', style: TextStyle(color: Colors.white)),
         ),  
