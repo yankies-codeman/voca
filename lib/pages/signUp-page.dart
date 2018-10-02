@@ -72,7 +72,7 @@ class _SignUpPageState extends State<SignUpPage> {
           minWidth: 200.0,
           height : 42.0,
           onPressed: null,         
-          child: Text('Continue', style: TextStyle(color: Colors.white)),
+          child: Text('Finish!', style: TextStyle(color: Colors.white)),
         ),  
       ),
     );
