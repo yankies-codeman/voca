@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../UI/loaderOverlay.dart';
 
 
@@ -118,6 +119,29 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           );
     }
 
+        smsCodeErrorDialog(BuildContext context){
+          return showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context){
+              return new AlertDialog(
+                title: Text('Error!'),
+                content: Text('The SMS code sent doesnt match what you entered.', style:TextStyle(fontSize: 30.0)),
+                contentPadding: EdgeInsets.all(10.0),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: Text('Re-Enter'),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    }
+                  )
+                ],
+              );  
+            } 
+          );
+    }
+
+
     Future<bool> smsCodeDialog(BuildContext context){
       return showDialog(
         context: context,
@@ -138,15 +162,21 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   FirebaseAuth.instance.currentUser().then((user){
                     
                     print("firebase authentication done");
+                    print(Firestore.instance.collection('VocaUsers').snapshots());
                     print(user);
 
+                    //(snapshot.data.document[0]['fieldname'])
+
+                  //CHECK IF THEIR DATA ALREADY EXISTS IN FIRESTORE DB AND REDIRECT THEM
                     if(user !=null){
                       //Navigator.of(context).pop();
                       //Navigator.of(context).pushReplacementNamed('/signuppage');
                     }
                     else{
-                      Navigator.of(context).pop();
-                      signIn();
+                      smsCodeErrorDialog(context);
+                      // Navigator.of(context).pop();
+                      // Navigator.of(context).pushReplacementNamed('/signuppage');
+                      //signIn();
                     }
                   });
                 }
