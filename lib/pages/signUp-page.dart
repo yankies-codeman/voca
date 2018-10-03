@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../UI/progress-button.dart';
 
 class SignUpPage extends StatefulWidget {
   _SignUpPageState createState() => _SignUpPageState();
@@ -8,6 +10,50 @@ class _SignUpPageState extends State<SignUpPage> {
   String _firstName;
   String _lastName;
   String _age;
+
+  
+
+  validationDialog(BuildContext context){
+          return showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context){
+              return new AlertDialog(
+                title: Text('Error!'),
+                content: Text('Some fields are empty!', style:TextStyle(fontSize: 20.0)),
+                contentPadding: EdgeInsets.all(10.0),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: Text('Ok'),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    }
+                  )
+                ],
+              );  
+            } 
+          );
+    }
+
+    addNewUser(){
+      if(_firstName == null || _lastName == null)
+      {
+        validationDialog(context);
+      }
+      else
+      {
+          Firestore.instance.collection('VocaUsers').add({
+          'Age' : _age,
+          'FirstName': _firstName,
+          'LastName':_lastName,
+          'PhoneNumber': '+233271770255'
+          }).then((value){
+            Navigator.of(context).pushReplacementNamed('/homepage');
+          }).catchError((e){
+            print(e);
+          });
+      }  
+  }
 
   @override
  Widget build(BuildContext context) {
@@ -71,7 +117,7 @@ class _SignUpPageState extends State<SignUpPage> {
           
           minWidth: 200.0,
           height : 42.0,
-          onPressed: null,         
+          onPressed: addNewUser,         
           child: Text('Finish!', style: TextStyle(color: Colors.white)),
         ),  
       ),
@@ -91,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 8.0), 
             ageTextField,
             SizedBox(height: 24.0),
-            saveButton
+             ProgressButton()//saveButton
           ]
 
         )

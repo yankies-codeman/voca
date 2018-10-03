@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../UI/loaderOverlay.dart';
 
 
@@ -67,7 +67,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 print('${exception.message}');
             };
 
-            print("were here!"); 
             toggleLoader();
             
             await FirebaseAuth.instance.verifyPhoneNumber(
@@ -77,9 +76,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               timeout: const Duration(seconds: 5),
               verificationCompleted: verifiedSuccess,
               verificationFailed: verifiedFailed,
-            ).then((value){
-               print('after auth');
-            });
+            );
+            // ).then((value){
+            //    print('after auth');
+            // });
+            
 
       }
       else{
@@ -119,7 +120,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           );
     }
 
-        smsCodeErrorDialog(BuildContext context){
+    smsCodeErrorDialog(BuildContext context){
           return showDialog(
             context: context,
             barrierDismissible: false,
@@ -162,21 +163,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   FirebaseAuth.instance.currentUser().then((user){
                     
                     print("firebase authentication done");
-                    print(Firestore.instance.collection('VocaUsers').snapshots());
-                    print(user);
+                    // print(Firestore.instance.collection('VocaUsers').snapshots());
+                    // print(user);
 
+                    //var testval = Firestore.instance.collection('VocaUsers').where('PhoneNumber', isEqualTo: '+233271770255');
                     //(snapshot.data.document[0]['fieldname'])
 
                   //CHECK IF THEIR DATA ALREADY EXISTS IN FIRESTORE DB AND REDIRECT THEM
-                    if(user !=null){
-                      //Navigator.of(context).pop();
-                      //Navigator.of(context).pushReplacementNamed('/signuppage');
+                    if(user != null)
+                    {
+                         redirectUser();
                     }
-                    else{
-                      smsCodeErrorDialog(context);
-                      // Navigator.of(context).pop();
-                      // Navigator.of(context).pushReplacementNamed('/signuppage');
-                      //signIn();
+                    else
+                    {
+                        //smsCodeErrorDialog(context);
+                        Navigator.of(context).pop();
+                        signIn();
                     }
                   });
                 }
@@ -192,13 +194,28 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           verificationId: _verificationId,
           smsCode: _smsCode
         ).then((user){
-
-           print('AT THE SIGNING IN PART');
-
-          Navigator.of(context).pushReplacementNamed('/signuppage');
+            redirectUser();
         }).catchError((e){
           print(e);
         });
+    }
+
+    bool UserExists(){
+        return false;
+    }
+
+    redirectUser(){
+      if(UserExists())
+        {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed('/homepage');
+        }
+        else
+        {
+          //WE TAKE THE PERSONS DETAILS IF THEY DONT EXIST IN DB
+          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed('/signuppage');
+        }
     }
 
   @override
