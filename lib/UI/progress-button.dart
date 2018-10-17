@@ -11,7 +11,7 @@ class ProgressButton extends StatefulWidget {
 }
 
 class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
-
+ 
 AnimationController _animationController;
 Animation _animation;
 bool _isPressed = false,_animatingReveal = false;
