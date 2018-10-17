@@ -10,7 +10,7 @@ class ProgressButton extends StatefulWidget {
   _ProgressButtonState createState() => _ProgressButtonState();
 }
 
-class _ProgressButtonState extends State<ProgressButton> with SingleTickerProviderStateMixin {
+class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
 
 AnimationController _animationController;
 Animation _animation;
@@ -44,7 +44,7 @@ GlobalKey _globalKey = GlobalKey();
           width: _width,
           child: RaisedButton(
             padding: EdgeInsets.all(0.0),
-            color: _state == 2 ? Colors.green : Colors.blue,
+            color: _state == 2 ? Colors.blueAccent : Colors.white,
             child: buildButtonChild(),
             onPressed: () {},
             onHighlightChanged: (isPressed) {
@@ -92,7 +92,7 @@ GlobalKey _globalKey = GlobalKey();
     if (_state == 0) {
       return Text(
         'Finish!',
-        style: TextStyle(color: Colors.white, fontSize: 16.0),
+        style: TextStyle(color: Colors.blueAccent, fontSize: 16.0),
       );
     } else if (_state == 1) {
       return SizedBox(
