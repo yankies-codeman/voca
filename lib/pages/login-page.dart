@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../UI/loaderOverlay.dart';
+import '../UI/progress-button.dart';
+
 
 
 class LoginPage extends StatefulWidget {
@@ -253,13 +255,17 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         borderRadius : BorderRadius.circular(30.0),
         shadowColor: Colors.lightBlueAccent.shade100,
         //elevation: 5.0,
-        child: MaterialButton(
+        child: Container(
+          height: 50.0,
+          width: 40.0,
+          child: RaisedButton(
+          padding: EdgeInsets.all(0.0),
           color:  Colors.lightBlueAccent,
-          minWidth: 200.0,
-          height : 42.0,
+          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(50.0)),
           onPressed: verifyPhone,         
           child: Text('Continue', style: TextStyle(color: Colors.white)),
-        ),  
+        ), 
+        )
       ),
     );
 
@@ -276,8 +282,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   logo,
                   SizedBox(height: 48.0),
                   phoneTextField,
-                  SizedBox(height: 24.0),
+                  SizedBox(height: 10.0),
                   loginButton
+                   //loginButton
                 ]
               )
             ),

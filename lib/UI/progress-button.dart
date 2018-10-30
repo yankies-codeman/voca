@@ -14,7 +14,7 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
  
 AnimationController _animationController;
 Animation _animation;
-bool _isPressed = false,_animatingReveal = false;
+bool _isPressed = false, _animatingReveal = false;
 int _state = 0;
 double _width = double.infinity;
 GlobalKey _globalKey = GlobalKey();
@@ -44,7 +44,8 @@ GlobalKey _globalKey = GlobalKey();
           width: _width,
           child: RaisedButton(
             padding: EdgeInsets.all(0.0),
-            color: _state == 2 ? Colors.blueAccent : Colors.white,
+            color: _state == 2 ? Colors.white : Colors.blue,
+            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
             child: buildButtonChild(),
             onPressed: () {},
             onHighlightChanged: (isPressed) {
@@ -92,7 +93,7 @@ GlobalKey _globalKey = GlobalKey();
     if (_state == 0) {
       return Text(
         'Finish!',
-        style: TextStyle(color: Colors.blueAccent, fontSize: 16.0),
+        style: TextStyle(color: Colors.white, fontSize: 16.0),
       );
     } else if (_state == 1) {
       return SizedBox(
@@ -100,11 +101,11 @@ GlobalKey _globalKey = GlobalKey();
         width: 36.0,
         child: CircularProgressIndicator(
           value: null,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white)
         ),
       );
     } else {
-      return Icon(Icons.check, color: Colors.white);
+      return Icon(Icons.check, color: Colors.blue);
     }
   }
 

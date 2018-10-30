@@ -13,7 +13,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   
 
-  validationDialog(BuildContext context){
+   validationDialog(BuildContext context){
           return showDialog(
             context: context,
             barrierDismissible: false,
@@ -35,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
           );
     }
 
-    addNewUser(){
+   addNewUser(){
       if(_firstName == null || _lastName == null)
       {
         validationDialog(context);
@@ -137,7 +137,9 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(height: 8.0), 
             ageTextField,
             SizedBox(height: 24.0),
-             ProgressButton()//saveButton
+            Center(
+                 child:ProgressButton()
+              )//saveButton
           ]
 
         )

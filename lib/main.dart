@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import './pages/login-page.dart';
 import './pages/home-page.dart';
 import './pages/signUp-page.dart';
+import './UI/progress-button.dart';
 
 
 
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         fontFamily: 'Nunito',
       ),
-      home: LoginPage(),
+      home: SignUpPage(),//LoginPage(),
       routes: <String, WidgetBuilder>{
         '/homepage': (BuildContext context) => HomePage(),
         '/signuppage': (BuildContext context) => SignUpPage(),
@@ -58,5 +59,16 @@ class MyApp extends StatelessWidget {
       },
     );
    
+
+  //  return new MaterialApp(
+  //     home: Scaffold(
+  //       appBar: new AppBar(
+  //         title: new Text("Test")
+  //       ),
+  //       body: new Center(
+  //         child: ProgressButton()
+  //       ),
+  //   ),
+  //  );
   }
 }
