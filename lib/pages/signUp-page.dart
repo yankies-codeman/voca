@@ -130,7 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
           shrinkWrap: true,
           padding : EdgeInsets.only(left: 24.0, right: 24.0),
           children: <Widget>[
-            SizedBox(height: 48.0),
+            SizedBox(height: 300.0),
             firstNameTextField,
             SizedBox(height: 8.0),
             lastNameTextField,
