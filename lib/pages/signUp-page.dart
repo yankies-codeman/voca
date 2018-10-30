@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../UI/progress-button.dart';
+import '../UI/progress_button.dart';
+import '../UI/reveal_progress_button.dart';
 
 class SignUpPage extends StatefulWidget {
   _SignUpPageState createState() => _SignUpPageState();
@@ -113,8 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
         shadowColor: Colors.lightBlueAccent.shade100,
         //elevation: 5.0,
         child: MaterialButton(
-          color:  Colors.lightBlueAccent,
-          
+          color:  Colors.lightBlueAccent,    
           minWidth: 200.0,
           height : 42.0,
           onPressed: addNewUser,         
@@ -138,7 +138,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ageTextField,
             SizedBox(height: 24.0),
             Center(
-                 child:ProgressButton()
+                 child: RevealProgressButton()
               )//saveButton
           ]
 
