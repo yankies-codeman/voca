@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+import '../models/voca_user.dart';
 import 'package:fluro/fluro.dart';
 import '../UI/progress_button.dart';
 import '../UI/reveal_progress_button_painter.dart';
@@ -9,6 +9,14 @@ import '../navigation.dart';
 
 
 class RevealProgressButton extends StatefulWidget {
+  
+  //Class variables
+  VocaUser newUser;
+  BuildContext context;
+
+  //Constructor
+  RevealProgressButton(this.newUser,this.context);
+
   @override
   State<StatefulWidget> createState() => _RevealProgressButtonState();
 }
@@ -23,7 +31,7 @@ class _RevealProgressButtonState extends State<RevealProgressButton> with Ticker
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: RevealProgressButtonPainter(_fraction, MediaQuery.of(context).size),
-      child: ProgressButton(reveal),
+      child: ProgressButton(reveal,widget.newUser,widget.context),
     );
   }
 

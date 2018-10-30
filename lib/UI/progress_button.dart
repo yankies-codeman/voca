@@ -128,25 +128,33 @@
 
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../models/voca_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProgressButton extends StatefulWidget {
+  
+  //Class variables
+  VocaUser newUser;
+  BuildContext context;
   final Function callback;
 
-  ProgressButton(this.callback);
+  ProgressButton(this.callback,this.newUser,this.context);
 
   @override
   State<StatefulWidget> createState() => _ProgressButtonState();
 }
 
-class _ProgressButtonState extends State<ProgressButton>
-    with TickerProviderStateMixin {
+class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
+
+  VocaUser _newUser;
+  BuildContext _context;
   bool _isPressed = false, _animatingReveal = false;
   int _state = 0;
   double _width = double.infinity;
   Animation _animation;
   GlobalKey _globalKey = GlobalKey();
   AnimationController _controller;
-
+  
   @override
   void deactivate() {
     reset();
@@ -158,6 +166,73 @@ class _ProgressButtonState extends State<ProgressButton>
     _controller.dispose();
     super.dispose();
   }
+
+   validationDialog(BuildContext context){
+          return showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context){
+              return new AlertDialog(
+                title: Text('Error!'),
+                content: Text('Some fields are empty!', style:TextStyle(fontSize: 20.0)),
+                contentPadding: EdgeInsets.all(10.0),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: Text('Ok'),
+                    onPressed: (){
+                      Navigator.of(context).pop();
+                    }
+                  )
+                ],
+              );  
+            } 
+          );
+    }
+
+   initializeWidget(){
+      _newUser = widget.newUser;
+      _context = widget.context;
+    }
+
+   addNewUser(){
+      if(_newUser.firstName == null || _newUser.lastName == null || _newUser.age == null)
+      {
+        validationDialog(_context);
+      }
+      else
+      {
+        //Let's animate the button if the user is not null
+          animateButton();
+
+          Firestore.instance.collection('VocaUsers').add({
+          'Age' : _newUser.age,
+          'FirstName': _newUser.firstName,
+          'LastName':_newUser.lastName,
+          'PhoneNumber': '+233500008264'//'+233271770255'_newUser.phoneNumber
+          }).then((value){
+            
+            finalAnimationMoment();
+            //Navigator.of(context).pushReplacementNamed('/homepage');
+          }).catchError((e){
+            print(e);
+          });
+      }  
+  }
+
+  finalAnimationMoment(){
+      setState(() {
+          _state = 2;
+        });
+
+         _animatingReveal = true;
+        widget.callback();
+
+      //   Timer(Duration(milliseconds: 3600), () {
+      //   _animatingReveal = true;
+      //   widget.callback();
+      // });
+    }
+
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +254,8 @@ class _ProgressButtonState extends State<ProgressButton>
               setState(() {
                 _isPressed = isPressed;
                 if (_state == 0) {
-                  animateButton();
+                  initializeWidget();
+                  addNewUser();    
                 }
               });
             },
@@ -187,6 +263,7 @@ class _ProgressButtonState extends State<ProgressButton>
         ));
   }
 
+ 
   void animateButton() {
     double initialWidth = _globalKey.currentContext.size.width;
 
@@ -204,16 +281,16 @@ class _ProgressButtonState extends State<ProgressButton>
       _state = 1;
     });
 
-    Timer(Duration(milliseconds: 3300), () {
-      setState(() {
-        _state = 2;
-      });
-    });
+    // Timer(Duration(milliseconds: 3300), () {
+    //   setState(() {
+    //     _state = 2;
+    //   });
+    // });
 
-    Timer(Duration(milliseconds: 3600), () {
-      _animatingReveal = true;
-      widget.callback();
-    });
+    // Timer(Duration(milliseconds: 3600), () {
+    //   _animatingReveal = true;
+    //   widget.callback();
+    // });
   }
 
   Widget buildButtonChild() {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../UI/progress_button.dart';
+
+import '../models/voca_user.dart';
 import '../UI/reveal_progress_button.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -8,54 +8,14 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  String _firstName;
-  String _lastName;
-  String _age;
+  // String _firstName;
+  // String _lastName;
+  // String _age;
+  var _newVocaUser = new VocaUser();
 
   
 
-   validationDialog(BuildContext context){
-          return showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context){
-              return new AlertDialog(
-                title: Text('Error!'),
-                content: Text('Some fields are empty!', style:TextStyle(fontSize: 20.0)),
-                contentPadding: EdgeInsets.all(10.0),
-                actions: <Widget>[
-                  new FlatButton(
-                    child: Text('Ok'),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    }
-                  )
-                ],
-              );  
-            } 
-          );
-    }
-
-   addNewUser(){
-      if(_firstName == null || _lastName == null)
-      {
-        validationDialog(context);
-      }
-      else
-      {
-          Firestore.instance.collection('VocaUsers').add({
-          'Age' : _age,
-          'FirstName': _firstName,
-          'LastName':_lastName,
-          'PhoneNumber': '+233271770255'
-          }).then((value){
-            Navigator.of(context).pushReplacementNamed('/homepage');
-          }).catchError((e){
-            print(e);
-          });
-      }  
-  }
-
+  
   @override
  Widget build(BuildContext context) {
 
@@ -63,7 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
       keyboardType: TextInputType.text,
       autofocus: false,
       onChanged: (value){
-         _firstName = value;
+       _newVocaUser.firstName = value;
       },
       decoration: InputDecoration(
         hintText : 'First Name',
@@ -79,7 +39,7 @@ class _SignUpPageState extends State<SignUpPage> {
       keyboardType: TextInputType.text,
       autofocus: false,
       onChanged: (value){
-         _lastName = value;
+         _newVocaUser.lastName = value;
       },
       decoration: InputDecoration(
         hintText : 'Last Name',
@@ -95,7 +55,7 @@ class _SignUpPageState extends State<SignUpPage> {
       keyboardType: TextInputType.number,
       autofocus: false,
       onChanged: (value){
-         _age =  value;
+        _newVocaUser.age =  value;
       },
       decoration: InputDecoration(
         hintText : 'Age',
@@ -117,7 +77,7 @@ class _SignUpPageState extends State<SignUpPage> {
           color:  Colors.lightBlueAccent,    
           minWidth: 200.0,
           height : 42.0,
-          onPressed: addNewUser,         
+          onPressed: (){},         
           child: Text('Finish!', style: TextStyle(color: Colors.white)),
         ),  
       ),
@@ -138,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ageTextField,
             SizedBox(height: 24.0),
             Center(
-                 child: RevealProgressButton()
+                 child: RevealProgressButton(_newVocaUser,context)
               )//saveButton
           ]
 
