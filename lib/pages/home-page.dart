@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../services/SharedPrefSingleton.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,10 +8,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+   SharedPrefSingleton prefs;
+
+@override
+initState(){
+  super.initState();
+  prefs = SharedPrefSingleton().getInstance(); 
+}
+
   @override
   Widget build(BuildContext context) {
     return new  Scaffold(
-      appBar: new AppBar(title: new Text('Dashboard'),centerTitle: true),
+      appBar: new AppBar(title: new Text('Voca'),centerTitle: true),
       body: Center(
         child: Container(
           child: new Column(
@@ -23,7 +33,8 @@ class _HomePageState extends State<HomePage> {
                   child: new Text('Logout'),
                   onPressed: (){
                     FirebaseAuth.instance.signOut().then((value){
-                        Navigator.of(context).pushReplacementNamed('/landingpage');
+                        prefs.clearPreferences();
+                        Navigator.of(context).pushReplacementNamed('/');
                     }).catchError((e){
                              
                     });

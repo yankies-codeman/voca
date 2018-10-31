@@ -128,14 +128,15 @@
 
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../services/SharedPrefSingleton.dart';
 import '../models/voca_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProgressButton extends StatefulWidget {
   
   //Class variables
-  VocaUser newUser;
-  BuildContext context;
+  final VocaUser newUser;
+  final BuildContext context;
   final Function callback;
 
   ProgressButton(this.callback,this.newUser,this.context);
@@ -146,6 +147,7 @@ class ProgressButton extends StatefulWidget {
 
 class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
 
+  SharedPrefSingleton prefs;
   VocaUser _newUser;
   BuildContext _context;
   bool _isPressed = false, _animatingReveal = false;
@@ -155,6 +157,12 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
   GlobalKey _globalKey = GlobalKey();
   AnimationController _controller;
   
+  @override
+  void initState() {
+      super.initState();
+      prefs = SharedPrefSingleton().getInstance(); 
+    }
+
   @override
   void deactivate() {
     reset();
@@ -208,11 +216,19 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
           'Age' : _newUser.age,
           'FirstName': _newUser.firstName,
           'LastName':_newUser.lastName,
-          'PhoneNumber': '+233500008264'//'+233271770255'_newUser.phoneNumber
+          'PhoneNumber': _newUser.phoneNumber
           }).then((value){
-            
-            finalAnimationMoment();
-            //Navigator.of(context).pushReplacementNamed('/homepage');
+
+            prefs.setUserLoggedIn().then((result){
+                 prefs.setCurrentUserFirstName(_newUser.firstName).then((result){
+                    prefs.setCurrentUserLastname(_newUser.lastName).then((result){
+                      prefs.setCurrentUserAge(_newUser.age).then((result){
+                         finalAnimationMoment();
+                      });
+                    });
+                 });
+            });
+     
           }).catchError((e){
             print(e);
           });
@@ -220,17 +236,11 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
   }
 
   finalAnimationMoment(){
-      setState(() {
-          _state = 2;
-        });
-
-         _animatingReveal = true;
+        setState(() {
+            _state = 2;
+          });
+        _animatingReveal = true;
         widget.callback();
-
-      //   Timer(Duration(milliseconds: 3600), () {
-      //   _animatingReveal = true;
-      //   widget.callback();
-      // });
     }
 
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../UI/loaderOverlay.dart';
-import '../UI/progress_button.dart';
+import '../services/SharedPrefSingleton.dart';
 
 
 
@@ -21,11 +21,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     bool showLoader = false;
 
     AnimationController _iconAnimationController;
-    Animation <double> _iconAnimation;
+    Animation <double> _iconAnimation;   
+    SharedPrefSingleton prefs;
 
   @override
   void initState(){
-     super.initState();
+    super.initState();
+    prefs = SharedPrefSingleton().getInstance(); 
 
      _iconAnimationController = new AnimationController(
        vsync: this,
@@ -45,44 +47,82 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     Future<void> verifyPhone() async{
 
       if(_phoneNumber.length == 13){
+      
+      prefs.setUserPhoneNumber(_phoneNumber).then((result){   
+            
+                print(result);      
+                  
+                final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verificationId){
+                this._verificationId = verificationId;
+                  };
 
-            final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verificationId){
-              this._verificationId = verificationId;
-            };
+                final PhoneCodeSent smsCodeSent = (String verificationId,[int forceCodeResend]){
+                
+                  print('Code has been sent');
+                  this._verificationId = verificationId;
 
-            final PhoneCodeSent smsCodeSent = (String verificationId,[int forceCodeResend]){
+                  smsCodeDialog(context).then((value){
+                    print('Signed In');
+                  });
+
+                };
+
+                final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
+                    print('verified');
+                };
+
+                final PhoneVerificationFailed verifiedFailed = (AuthException exception){
+                    print('${exception.message}');
+                };
+
+                toggleLoader();
+                
+                //await
+                FirebaseAuth.instance.verifyPhoneNumber(
+                  phoneNumber: this._phoneNumber,
+                  codeAutoRetrievalTimeout: autoRetrieve,
+                  codeSent: smsCodeSent,
+                  timeout: const Duration(seconds: 5),
+                  verificationCompleted: verifiedSuccess,
+                  verificationFailed: verifiedFailed,
+                );
+           
+            });
+
+            // final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verificationId){
+            //   this._verificationId = verificationId;
+            // };
+
+            // final PhoneCodeSent smsCodeSent = (String verificationId,[int forceCodeResend]){
              
-              print('Code has been sent');
-              this._verificationId = verificationId;
+            //   print('Code has been sent');
+            //   this._verificationId = verificationId;
 
-              smsCodeDialog(context).then((value){
-                print('Signed In');
-              });
+            //   smsCodeDialog(context).then((value){
+            //     print('Signed In');
+            //   });
 
-            };
+            // };
 
-            final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
-                print('verified');
-            };
+            // final PhoneVerificationCompleted verifiedSuccess = (FirebaseUser user) {
+            //     print('verified');
+            // };
 
-            final PhoneVerificationFailed verifiedFailed = (AuthException exception){
-                print('${exception.message}');
-            };
+            // final PhoneVerificationFailed verifiedFailed = (AuthException exception){
+            //     print('${exception.message}');
+            // };
 
-            toggleLoader();
+            // toggleLoader();
             
-            await FirebaseAuth.instance.verifyPhoneNumber(
-              phoneNumber: this._phoneNumber,
-              codeAutoRetrievalTimeout: autoRetrieve,
-              codeSent: smsCodeSent,
-              timeout: const Duration(seconds: 5),
-              verificationCompleted: verifiedSuccess,
-              verificationFailed: verifiedFailed,
-            );
-            // ).then((value){
-            //    print('after auth');
-            // });
-            
+            // await FirebaseAuth.instance.verifyPhoneNumber(
+            //   phoneNumber: this._phoneNumber,
+            //   codeAutoRetrievalTimeout: autoRetrieve,
+            //   codeSent: smsCodeSent,
+            //   timeout: const Duration(seconds: 5),
+            //   verificationCompleted: verifiedSuccess,
+            //   verificationFailed: verifiedFailed,
+            // );
+           
 
       }
       else{

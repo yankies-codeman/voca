@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import '../services/SharedPrefSingleton.dart';
 import '../models/voca_user.dart';
 import '../UI/reveal_progress_button.dart';
 
@@ -8,13 +8,24 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  // String _firstName;
-  // String _lastName;
-  // String _age;
-  var _newVocaUser = new VocaUser();
+  
+  SharedPrefSingleton prefs;
+  VocaUser _newVocaUser;
 
   
+  @override
+  initState(){
+    super.initState();
+    _newVocaUser = new VocaUser();
+    prefs = SharedPrefSingleton().getInstance(); 
+    prefs.getUserPhoneNumber().then((result){
+      print(result);
+              setState(() {
+                _newVocaUser.phoneNumber = result;
+            });
+    });
 
+  }
   
   @override
  Widget build(BuildContext context) {

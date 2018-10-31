@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import './pages/login-page.dart';
 import './pages/home-page.dart';
+import './pages/landing-page.dart';
 import './pages/signUp-page.dart';
-import './navigation.dart';
+import './services/navigation.dart';
+
 import './UI/progress_button.dart';
 
 
@@ -14,11 +16,31 @@ class VocaApp extends StatelessWidget {
   // This widget is the root of your application.
    VocaApp() {
     Navigation.initPaths();
+    
+    // SharedPrefSingleton sps = SharedPrefSingleton().getInstance();
+    // bool isLoggedIn = false;
+    // sps.getUserLoggedIn().then((bool result){
+    //   isLoggedIn = result;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
+
     
+    
+     return new MaterialApp(
+      title: 'Voca',
+      debugShowCheckedModeBanner: false,
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Nunito',
+      ),
+      home: LandingPage(),//SignUpPage(),
+      onGenerateRoute: Navigation.router.generator,
+    );
+   
+
     //  return new MaterialApp(
     //   title: 'Voca',
     //   debugShowCheckedModeBanner: false,
@@ -41,19 +63,7 @@ class VocaApp extends StatelessWidget {
     //     '/landingpage': (BuildContext context) => LoginPage(),
     //   },
     // );
-   
-   
-     return new MaterialApp(
-      title: 'Voca',
-      debugShowCheckedModeBanner: false,
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Nunito',
-      ),
-      home: LoginPage(),//SignUpPage(),
-      onGenerateRoute: Navigation.router.generator,
-    );
-   
+
 
   //  return new MaterialApp(
   //     home: Scaffold(
