@@ -3,6 +3,7 @@ import '../services/SharedPrefSingleton.dart';
 import '../models/voca_user.dart';
 import '../UI/reveal_progress_button.dart';
 
+
 class SignUpPage extends StatefulWidget {
   _SignUpPageState createState() => _SignUpPageState();
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/SharedPrefSingleton.dart';
+import '../services/contactsService.dart';
 
 import '../pages/talk-page.dart';
 import '../pages/messages-page.dart';
@@ -21,17 +22,19 @@ class _HomePageState extends State<HomePage> {
   EmergencyPage emergencyPage;
   List<Widget> pages;
   Widget currentPage;
+  ContactService contactService;
 
   @override
   initState() {
     super.initState();
-    currentTab = 0;
+    currentTab = 1;
     prefs = SharedPrefSingleton().getInstance();
     talkPage = new TalkPage();
     messagesPage = new MessagesPage();
     contactsPage = new ContactsPage();
     emergencyPage = new EmergencyPage();
     currentPage = messagesPage;
+    contactService = ContactService().getInstance();     
 
     pages = [talkPage, messagesPage, contactsPage, emergencyPage];
   }
@@ -96,13 +99,43 @@ class _HomePageState extends State<HomePage> {
           title: Text(_text, style: new TextStyle(color: Colors.blue)));
     }
 
+    changeFloatingAction(){
+      
+      IconData icon;
+      Function fabAction;
+
+      if(currentPage == messagesPage)
+      {
+          icon = Icons.message;
+          fabAction = () => print("message fab tapped!");
+      }
+      else if(currentPage == contactsPage)
+      {
+        icon = Icons.sync;
+        fabAction = () =>  contactService.syncContacts().then((result){print("contact sync worked!");   print("contact fab tapped!"); });  
+
+      }
+      else if(currentPage == emergencyPage)
+      {
+        icon = Icons.add;
+          fabAction = () => print("emergency fab tapped!");
+      }
+      // contactService.syncContacts()
+      //   .then((result){
+      //     print("contact sync worked!");
+      //   });  
+
+    return  FloatingActionButton(
+        child: Icon(icon),
+        onPressed: fabAction
+    );
+    
+    }
+
     return new Scaffold(
       appBar: new AppBar(title: new Text('Voca'), centerTitle: true),
       body: currentPage,
-      floatingActionButton: FloatingActionButton(
-        child:Icon(Icons.message),
-        onPressed: (){},
-      ),
+      floatingActionButton: currentPage == talkPage ? null : changeFloatingAction(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.shifting,

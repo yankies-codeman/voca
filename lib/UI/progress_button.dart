@@ -129,15 +129,17 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../services/SharedPrefSingleton.dart';
+import '../services/contactsService.dart';
 import '../models/voca_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+ 
 class ProgressButton extends StatefulWidget {
   
   //Class variables
   final VocaUser newUser;
   final BuildContext context;
   final Function callback;
+  
 
   ProgressButton(this.callback,this.newUser,this.context);
 
@@ -150,6 +152,7 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
   SharedPrefSingleton prefs;
   VocaUser _newUser;
   BuildContext _context;
+  ContactService contactService;
   bool _isPressed = false, _animatingReveal = false;
   int _state = 0;
   double _width = double.infinity;
@@ -160,7 +163,8 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
   @override
   void initState() {
       super.initState();
-      prefs = SharedPrefSingleton().getInstance(); 
+      prefs = SharedPrefSingleton().getInstance();
+      contactService = ContactService().getInstance();     
     }
 
   @override
@@ -223,7 +227,9 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
                  prefs.setCurrentUserFirstName(_newUser.firstName).then((result){
                     prefs.setCurrentUserLastname(_newUser.lastName).then((result){
                       prefs.setCurrentUserAge(_newUser.age).then((result){
-                         finalAnimationMoment();
+                        contactService.syncContacts().then((result){
+                             finalAnimationMoment();
+                        });
                       });
                     });
                  });
@@ -243,6 +249,7 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
         widget.callback();
     }
 
+  
 
   @override
   Widget build(BuildContext context) {
