@@ -14,28 +14,46 @@ class ContactService {
     return _contactService;
   }
 
-  Future<Iterable<Contact>> getAllContacts() async {
-    // Get all contacts
-    Iterable<Contact> results = await ContactsService.getContacts();
-    return results;
+    Future<Iterable<Contact>> getAllContacts() async {
+    // Get all contacts   Future<Iterable<Contact>> await async
+
+    Iterable<Contact> contacts = await ContactsService.getContacts();
+    
+    // Iterable<Contact> results = [];
+    //   ContactsService.getContacts().then((data){
+    //     print(data);
+    //   });
+
+    // .then((data) {
+    //   results = data;
+    // });
+print(contacts);
+    return contacts;
   }
 
-  Future<bool> syncContacts() async {
+  syncContacts() {
     bool result = false;
-    Iterable<Contact> deviceContacts;
+    Iterable<Contact> deviceContacts = [];
+    List<String> fireStoreContacts = [];
 
-    var vocaUserContacts = Firestore.instance.collection('VocaUsers').snapshots();
+    //data.documents.forEach((doc) => print(doc["FirstName"]));
+    Firestore.instance.collection('VocaUsers').snapshots().listen((data) {
+        data.documents.forEach((doc) {
+          print(doc["FirstName"]);
+          print(doc["PhoneNumber"]);
+          String _phoneNumber = doc["PhoneNumber"];
+          if(_phoneNumber != null){
+            fireStoreContacts.add(_phoneNumber);
+          }     
+        });
+     
+        getAllContacts().then((results) {
+          deviceContacts = results;
+          print(results);
+        });
 
-    print(vocaUserContacts.length);
-
-     getAllContacts().then((results){
-       deviceContacts = results;
-        print(deviceContacts.length);
-     });
-
-  // for(var i = 0, i < deviceContacts.length, ){
-    
-  // }
+          print(fireStoreContacts);
+    });
 
     return result;
   }
