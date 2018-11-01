@@ -24,7 +24,7 @@ class ContactService {
     bool result = false;
     Iterable<Contact> deviceContacts;
 
-    var vocaUserContacts = Firestore.instance.collection('VocaUsers').toString();
+    var vocaUserContacts = Firestore.instance.collection('VocaUsers').snapshots();
 
     print(vocaUserContacts.length);
 
