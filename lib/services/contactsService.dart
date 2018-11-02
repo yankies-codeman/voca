@@ -65,7 +65,7 @@ class ContactService {
           fireStoreContacts.add(_phoneNumber);
         }
       });
-      print(fireStoreContacts);
+      //print(fireStoreContacts);
     });
 
     return fireStoreContacts;
@@ -75,13 +75,30 @@ class ContactService {
     bool result = false;
     List<DeviceContact> deviceContacts = [];
     List<String> fireStoreContacts = [];
+    List<DeviceContact> syncedContacts = [];
 
     getAllContacts().then((allDeviceContacts) {
       deviceContacts = allDeviceContacts;
-      print(deviceContacts);
+      //print(deviceContacts);
       getFirestoreContacts().then((allFireStoreContacts) {
         fireStoreContacts = allFireStoreContacts;
-        print(fireStoreContacts);
+        //print(fireStoreContacts);
+
+        //BRAIN OF SYNCING
+        deviceContacts.forEach((devContact){
+            fireStoreContacts.forEach((fireContact){
+              if(devContact.phoneNumber == fireContact){
+                DeviceContact commonContact = new DeviceContact();
+                commonContact.phoneNumber = devContact.phoneNumber; //+233
+                commonContact.displayName = devContact.displayName;
+                syncedContacts.add(commonContact);
+
+                print(commonContact.displayName);
+                print(commonContact.phoneNumber);
+              }
+            });
+        });
+
         result = true;
       });
     });
