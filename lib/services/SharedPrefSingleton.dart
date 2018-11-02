@@ -5,6 +5,7 @@ class SharedPrefSingleton{
   static SharedPrefSingleton _sharedPrefSingleton;
 
    SharedPrefSingleton();//Constructor
+    //SharedPrefSingleton.internal();/
 
    getInstance(){
     if(_sharedPrefSingleton == null)

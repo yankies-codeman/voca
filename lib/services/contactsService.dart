@@ -15,50 +15,75 @@ class ContactService {
     return _contactService;
   }
 
-    Future<Iterable<Contact>> getAllContacts() async {
-    // Get all contacts   Future<Iterable<Contact>> await async
-    List<DeviceContact> deviceContacts = [];
-    Iterable<Contact> contacts = await ContactsService.getContacts().then((data){
-           data.forEach((contact){
-            print( contact.displayName);
-            print(contact.phones.forEach);
-           });
-    });
-    
-    // Iterable<Contact> results = [];
-    //   ContactsService.getContacts().then((data){
-    //     print(data);
-    //   });
+  Future<List<DeviceContact>> getAllContacts() async {
+    // Get all contacts   Iterable<Contact> contacts =
+    List<DeviceContact> allDeviceContacts = [];
 
-    // .then((data) {
-    //   results = data;
-    // });
-    print(contacts);
-    return contacts;
+    await ContactsService.getContacts().then((data) {
+      data.forEach((contact) {
+        String currentContactName = contact.displayName;
+
+        contact.phones.forEach((phoneNumber) {
+          if (phoneNumber != null) {
+            bool numberExistsInList = false;
+
+            //CHECKING FOR DUPLICATE CONTACTS
+            allDeviceContacts.forEach((phoneNumberInDeviceList) {
+              if (phoneNumber.value == phoneNumberInDeviceList.phoneNumber) {
+                numberExistsInList = true;
+              }
+            });
+
+            if (!numberExistsInList) {
+              DeviceContact currentDeviceContact = new DeviceContact();
+              currentDeviceContact.displayName = currentContactName;
+              currentDeviceContact.phoneNumber = phoneNumber.value
+                  .toString()
+                  .replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+              allDeviceContacts.add(currentDeviceContact);
+              print(currentDeviceContact.displayName);
+              print(currentDeviceContact.phoneNumber);
+            }
+          }
+        });
+      });
+    });
+
+    return allDeviceContacts;
   }
 
-  syncContacts() {
-    bool result = false;
-    Iterable<Contact> deviceContacts = [];
+  Future<List<String>> getFirestoreContacts() async {
     List<String> fireStoreContacts = [];
 
     //data.documents.forEach((doc) => print(doc["FirstName"]));
-    Firestore.instance.collection('VocaUsers').snapshots().listen((data) {
-        data.documents.forEach((doc) {
-          print(doc["FirstName"]);
-          print(doc["PhoneNumber"]);
-          String _phoneNumber = doc["PhoneNumber"];
-          if(_phoneNumber != null){
-            fireStoreContacts.add(_phoneNumber);
-          }     
-        });
-     
-        getAllContacts().then((results) {
-          deviceContacts = results;
-          print(results);
-        });
+    await Firestore.instance.collection('VocaUsers').snapshots().listen((data) {
+      data.documents.forEach((doc) {
+        print(doc["FirstName"]);
+        print(doc["PhoneNumber"]);
+        String _phoneNumber = doc["PhoneNumber"];
+        if (_phoneNumber != null) {
+          fireStoreContacts.add(_phoneNumber);
+        }
+      });
+      print(fireStoreContacts);
+    });
 
-          print(fireStoreContacts);
+    return fireStoreContacts;
+  }
+
+ Future<bool> syncContacts() async {
+    bool result = false;
+    List<DeviceContact> deviceContacts = [];
+    List<String> fireStoreContacts = [];
+
+    getAllContacts().then((allDeviceContacts) {
+      deviceContacts = allDeviceContacts;
+      print(deviceContacts);
+      getFirestoreContacts().then((allFireStoreContacts) {
+        fireStoreContacts = allFireStoreContacts;
+        print(fireStoreContacts);
+        result = true;
+      });
     });
 
     return result;

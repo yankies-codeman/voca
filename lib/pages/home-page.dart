@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
       {
         icon = Icons.sync;
         //fabAction = () =>  contactService.syncContacts();
-        fabAction = () =>  contactService.getAllContacts().then((data){
+        fabAction = () =>  contactService.syncContacts().then((data){
           print(data);
         });//contactService.syncContacts(); print("contact sync worked!");   print("contact fab tapped!");  
       }

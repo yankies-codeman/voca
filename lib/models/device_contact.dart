@@ -1,5 +1,4 @@
 class DeviceContact{
-  String firstName;
-  String lastName;
+  String displayName;
   String phoneNumber;
 }
