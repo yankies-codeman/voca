@@ -83,7 +83,7 @@ class ContactService {
       getFirestoreContacts().then((allFireStoreContacts) {
         fireStoreContacts = allFireStoreContacts;
         //print(fireStoreContacts);
-
+  
         //BRAIN OF SYNCING
         deviceContacts.forEach((devContact){
             fireStoreContacts.forEach((fireContact){
