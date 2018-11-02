@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'dart:async';
+import '../models/device_contact.dart';
 
 class ContactService {
   static ContactService _contactService;
@@ -16,8 +17,13 @@ class ContactService {
 
     Future<Iterable<Contact>> getAllContacts() async {
     // Get all contacts   Future<Iterable<Contact>> await async
-
-    Iterable<Contact> contacts = await ContactsService.getContacts();
+    List<DeviceContact> deviceContacts = [];
+    Iterable<Contact> contacts = await ContactsService.getContacts().then((data){
+           data.forEach((contact){
+            print( contact.displayName);
+            print(contact.phones.forEach);
+           });
+    });
     
     // Iterable<Contact> results = [];
     //   ContactsService.getContacts().then((data){
@@ -27,7 +33,7 @@ class ContactService {
     // .then((data) {
     //   results = data;
     // });
-print(contacts);
+    print(contacts);
     return contacts;
   }
 
