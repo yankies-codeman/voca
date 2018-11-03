@@ -227,10 +227,7 @@ class _ProgressButtonState extends State<ProgressButton> with TickerProviderStat
                  prefs.setCurrentUserFirstName(_newUser.firstName).then((result){
                     prefs.setCurrentUserLastname(_newUser.lastName).then((result){
                       prefs.setCurrentUserAge(_newUser.age).then((result){
-                        contactService.getAllContacts().then((result){
-                          print(result);
-                             finalAnimationMoment();
-                        });
+                          finalAnimationMoment();
                       });
                     });
                  });

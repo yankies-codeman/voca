@@ -1,5 +1,4 @@
-class DeviceContact{
-  String displayName;
+class FirestoreContact{
   String phoneNumber;
   String phoneNumberComparableValue;
 }

@@ -3,5 +3,6 @@ class VocaUser{
   String lastName;
   String age;
   String phoneNumber;
+  String phoneNumberComparableValue;
 
 }

@@ -112,10 +112,9 @@ class _HomePageState extends State<HomePage> {
       else if(currentPage == contactsPage)
       {
         icon = Icons.sync;
-        //fabAction = () =>  contactService.syncContacts();
         fabAction = () =>  contactService.syncContacts().then((data){
           print(data);
-        });//contactService.syncContacts(); print("contact sync worked!");   print("contact fab tapped!");  
+        }); 
       }
       else if(currentPage == emergencyPage)
       {
