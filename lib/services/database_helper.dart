@@ -34,7 +34,7 @@ class DatabaseHelper{
 
   void _onCreate(Database db,int version) async{
     String syncedContactCreationQuery = "CREATE TABLE SyncedContact(id INTEGER PRIMARY KEY, DisplayName TEXT, PhoneNumber TEXT)";
-    String vocaMessagesQuery = "CREATE TABLE VocaMessages(id INTEGER PRIMARY KEY, Sender TEXT, Recipient TEXT,TEXT Recipient, TEXT TimeSent, TEXT TimeReceived)";
+    String vocaMessagesQuery = "CREATE TABLE VocaMessages(id INTEGER PRIMARY KEY, Sender TEXT, Recipient TEXT, TimeSent TEXT,TimeReceived TEXT)";
     await db.execute(syncedContactCreationQuery).then((result){
          db.execute(vocaMessagesQuery);
     });
@@ -43,8 +43,12 @@ class DatabaseHelper{
   }
 
   Future<int> saveSyncedContact(DeviceContact _syncedContact) async{
+
+    print(_syncedContact.displayName + 'ENTERING DB');
     var dbClient = await db;
     int result  = await dbClient.insert("SyncedContact", _syncedContact.toMap());
+
+    print('RESULT OF ENTRY: '+result.toString());
     return result; 
   }
      
