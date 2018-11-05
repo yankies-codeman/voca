@@ -59,15 +59,16 @@ class ContactService {
             });
 
             if (!numberExistsInList) {
-              DeviceContact currentDeviceContact = new DeviceContact();
-             
-              currentDeviceContact.displayName = currentContactName;
-              currentDeviceContact.phoneNumber = phoneNumber.value
+                         
+              String currentDeviceContactDisplayName = currentContactName;
+              String currentDeviceContactNumber = phoneNumber.value
                   .toString()
                   .replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-              currentDeviceContact.phoneNumberComparableValue = getComparableValue(currentDeviceContact.phoneNumber);
+              String currentDeviceContactPhoneNumberComparableValue = getComparableValue(currentDeviceContactNumber);
+
+              DeviceContact currentDeviceContact = new DeviceContact(currentDeviceContactDisplayName,currentDeviceContactNumber,currentDeviceContactPhoneNumberComparableValue);
               allDeviceContacts.add(currentDeviceContact);
-               print(currentDeviceContact.displayName+ ": "+ currentDeviceContact.phoneNumber);
+              print(currentDeviceContact.displayName+ ": "+ currentDeviceContact.phoneNumber);
             }
             else{
               print(' this number exists : ' + phoneNumber.value);
@@ -148,9 +149,12 @@ class ContactService {
             print(devContact.displayName + "("+ devContact.phoneNumberComparableValue+ ")" ' : Against : ' + fireContact.phoneNumberComparableValue);
 
             if (devContact.phoneNumberComparableValue == fireContact.phoneNumberComparableValue) {
-              DeviceContact commonContact = new DeviceContact();
-              commonContact.phoneNumber = devContact.phoneNumber; //+233
-              commonContact.displayName = devContact.displayName;
+             
+              String commonContactdisplayName = devContact.displayName;
+              String commonContactphoneNumber = devContact.phoneNumber; //+233    
+              String phoneNumberComparableValue = getComparableValue(commonContactphoneNumber);        
+
+              DeviceContact commonContact = new DeviceContact(commonContactdisplayName,commonContactphoneNumber,phoneNumberComparableValue);
               syncedContacts.add(commonContact);
 
               print("Matched Contacts :=>> "+devContact.displayName+ "("+ devContact.phoneNumber+ ")" + 'and' +fireContact.phoneNumber);

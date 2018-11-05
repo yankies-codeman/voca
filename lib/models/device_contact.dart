@@ -1,21 +1,23 @@
 class DeviceContact{
-  String displayName;
-  String phoneNumber;
-  String phoneNumberComparableValue;
+  String _displayName;
+  String _phoneNumber;
+  String _phoneNumberComparableValue;
 
-  DeviceContact(this.displayName,this.phoneNumber,this.phoneNumberComparableValue);
+  DeviceContact(this._displayName,this._phoneNumber,this._phoneNumberComparableValue);
 
-  DeviceContact.map(dynamic obj){
-    this.displayName = obj['DisplayName'];
-     this.phoneNumber = obj['PhoneNumber'];
+  DeviceContact.fromMap(dynamic obj){
+     this._displayName = obj['DisplayName'];
+     this._phoneNumber = obj['PhoneNumber'];
   }
 
-  String get isplayName => displayName;
+  String get displayName => _displayName;
+  String get phoneNumber => _phoneNumber;
+  String get phoneNumberComparableValue => _phoneNumberComparableValue;
 
   Map<String,dynamic> toMap (){
-    var map = new  Map<String,dynamic>();
-    map["DisplayName"] = displayName;
-     map["PhoneNumber"] = phoneNumber;
+     var map = new  Map<String,dynamic>();
+     map["DisplayName"] = _displayName;
+     map["PhoneNumber"] = _phoneNumber;
 
      return map;
   }
