@@ -51,6 +51,44 @@ class DatabaseHelper{
     print('RESULT OF ENTRY: '+result.toString());
     return result; 
   }
+
+  
+  // Future<List> getAllNotes() async {
+  //   var result = await db.query(tableNote, columns: [columnId, columnTitle, columnDescription]);
+  
+  //   return result.toList();
+  // }
+
+  Future<List<DeviceContact>> retrieveSyncedContact() async{
+
+    print('FETCHING FROM DB');
+    List<DeviceContact> savedSyncedContacts = [];
+    var dbClient = await db; 
+    var result  = await dbClient.query("SyncedContact", columns: ['id','DisplayName','PhoneNumber']);
+
+    result.toList().forEach((res){
+     DeviceContact contact = DeviceContact.fromMap(res);
+     savedSyncedContacts.add(contact);
+     print(contact.nameLeadingAlphabet+' ===>> '+contact.displayName);
+    });
+   
+    return  savedSyncedContacts; 
+  }
+
+  Future<DeviceContact> getContact(String _phoneNumber) async {
+    var dbClient = await db;
+    List<Map> result = await dbClient.query("SyncedContact",
+        columns: ["PhoneNumber"],
+        where: 'PhoneNumber = ?',
+        whereArgs: [_phoneNumber]);
+//    var result = await dbClient.rawQuery('SELECT * FROM $tableNote WHERE $columnId = $id');
+ 
+    if (result.length > 0) {
+      return  DeviceContact.fromMap(result.first);
+    }
+ 
+    return null;
+  }
      
        
 }

@@ -39,6 +39,10 @@ class _HomePageState extends State<HomePage> {
     pages = [talkPage, messagesPage, contactsPage, emergencyPage];
   }
 
+  // refreshSavedContacts(){
+  //    contactsPage = new ContactsPage();
+  // }
+
   @override
   Widget build(BuildContext context) {
     // return new  Scaffold(
@@ -112,8 +116,9 @@ class _HomePageState extends State<HomePage> {
       else if(currentPage == contactsPage)
       {
         icon = Icons.sync;
-        fabAction = () =>  contactService.syncContacts().then((data){
+        fabAction = () =>  contactService.getSavedSyncedContacts().then((data){
           print(data);
+         
         }); 
       }
       else if(currentPage == emergencyPage)

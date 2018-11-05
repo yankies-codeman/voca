@@ -124,6 +124,16 @@ class ContactService {
     return fireStoreContacts;
   }
 
+Future <List<DeviceContact>> getSavedSyncedContacts () async{
+   DatabaseHelper db = new DatabaseHelper();
+     List<DeviceContact> deviceContacts = [];
+
+     await db.retrieveSyncedContact().then((results){
+       deviceContacts = results;
+     });
+     return deviceContacts;
+}
+
   Future<bool> syncContacts() async {
     bool result = false;
     List<DeviceContact> deviceContacts = [];
