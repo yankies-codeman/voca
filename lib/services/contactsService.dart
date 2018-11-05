@@ -4,7 +4,7 @@ import 'package:contacts_service/contacts_service.dart';
 import 'dart:async';
 import '../models/device_contact.dart';
 import '../models/firestore_contact.dart';
-
+import '../services/database_helper.dart';
 
 class ContactService {
   static ContactService _contactService;
@@ -18,25 +18,21 @@ class ContactService {
     return _contactService;
   }
 
-  getComparableValue(String _number){
+  getComparableValue(String _number) {
     String result = '';
-      if(_number != null){
-        if(_number.startsWith('+')){
-          result = _number.substring(4);
-        }
-        else if(_number.startsWith('0')){
-            result = _number.substring(1);
-        }
-       else{
-         result = _number;
-       }
+    if (_number != null) {
+      if (_number.startsWith('+')) {
+        result = _number.substring(4);
+      } else if (_number.startsWith('0')) {
+        result = _number.substring(1);
+      } else {
+        result = _number;
       }
-      else
-      {
-       result = _number;
-      }       
-        print(result);
-        return result;
+    } else {
+      result = _number;
+    }
+    print(result);
+    return result;
   }
 
   Future<List<DeviceContact>> getAllDeviceContacts() async {
@@ -59,34 +55,37 @@ class ContactService {
             });
 
             if (!numberExistsInList) {
-                         
               String currentDeviceContactDisplayName = currentContactName;
               String currentDeviceContactNumber = phoneNumber.value
                   .toString()
                   .replaceAll(new RegExp(r"\s+\b|\b\s"), "");
-              String currentDeviceContactPhoneNumberComparableValue = getComparableValue(currentDeviceContactNumber);
+              String currentDeviceContactPhoneNumberComparableValue =
+                  getComparableValue(currentDeviceContactNumber);
 
-              DeviceContact currentDeviceContact = new DeviceContact(currentDeviceContactDisplayName,currentDeviceContactNumber,currentDeviceContactPhoneNumberComparableValue);
+              DeviceContact currentDeviceContact = new DeviceContact(
+                  currentDeviceContactDisplayName,
+                  currentDeviceContactNumber,
+                  currentDeviceContactPhoneNumberComparableValue);
               allDeviceContacts.add(currentDeviceContact);
-              print(currentDeviceContact.displayName+ ": "+ currentDeviceContact.phoneNumber);
-            }
-            else{
+              print(currentDeviceContact.displayName +
+                  ": " +
+                  currentDeviceContact.phoneNumber);
+            } else {
               print(' this number exists : ' + phoneNumber.value);
             }
           }
         });
       });
 
-        print('Device contacts are in!');
+      print('Device contacts are in!');
     });
 
     return allDeviceContacts;
   }
 
- Future<List<FirestoreContact>> getFirestoreContacts() async{
+  Future<List<FirestoreContact>> getFirestoreContacts() async {
     List<FirestoreContact> fireStoreContacts = [];
 
-     
     // FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
     //     .setTimestampsInSnapshotsEnabled(true)
     //     .build();
@@ -104,21 +103,23 @@ class ContactService {
     //   print('FireStore contacts are in!');
     // });
 
-      await Firestore.instance.collection('VocaUsers').getDocuments().then((data){
-        data.documents.forEach((doc) {
-        print("Firestore => "+ doc["FirstName"]+": "+doc["PhoneNumber"]);
+    await Firestore.instance
+        .collection('VocaUsers')
+        .getDocuments()
+        .then((data) {
+      data.documents.forEach((doc) {
+        print("Firestore => " + doc["FirstName"] + ": " + doc["PhoneNumber"]);
         String _phoneNumber = doc["PhoneNumber"];
         if (_phoneNumber != null) {
           FirestoreContact currentFirestoreContact = new FirestoreContact();
           currentFirestoreContact.phoneNumber = _phoneNumber;
-          currentFirestoreContact.phoneNumberComparableValue =  getComparableValue(_phoneNumber);
-          fireStoreContacts.add(currentFirestoreContact);   
+          currentFirestoreContact.phoneNumberComparableValue =
+              getComparableValue(_phoneNumber);
+          fireStoreContacts.add(currentFirestoreContact);
         }
       });
-         print('FireStore contacts are in!');
-      });
-
-    
+      print('FireStore contacts are in!');
+    });
 
     return fireStoreContacts;
   }
@@ -128,58 +129,67 @@ class ContactService {
     List<DeviceContact> deviceContacts = [];
     List<FirestoreContact> fireStoreContacts = [];
     List<DeviceContact> syncedContacts = [];
+     DatabaseHelper db = new DatabaseHelper();
 
     getAllDeviceContacts().then((allDeviceContacts) {
-      
       deviceContacts = allDeviceContacts;
-       
-      getFirestoreContacts().then((allFireStoreContacts) {
      
+
+      getFirestoreContacts().then((allFireStoreContacts) {
         fireStoreContacts = allFireStoreContacts;
 
         print(allFireStoreContacts);
         print('got into the this part');
 
-        if(allDeviceContacts != null && allFireStoreContacts != null){
+        if (allDeviceContacts != null && allFireStoreContacts != null) {
           //BRAIN OF SYNCING
-        deviceContacts.forEach((devContact) {
-             
-          fireStoreContacts.forEach((fireContact) {
-           
-            print(devContact.displayName + "("+ devContact.phoneNumberComparableValue+ ")" ' : Against : ' + fireContact.phoneNumberComparableValue);
+          deviceContacts.forEach((devContact) {
+            fireStoreContacts.forEach((fireContact) {
+              print(devContact.displayName +
+                  "(" +
+                  devContact.phoneNumberComparableValue +
+                  ")" ' : Against : ' +
+                  fireContact.phoneNumberComparableValue);
 
-            if (devContact.phoneNumberComparableValue == fireContact.phoneNumberComparableValue) {
-             
-              String commonContactdisplayName = devContact.displayName;
-              String commonContactphoneNumber = devContact.phoneNumber; //+233    
-              String phoneNumberComparableValue = getComparableValue(commonContactphoneNumber);        
+              if (devContact.phoneNumberComparableValue ==
+                  fireContact.phoneNumberComparableValue) {
+                String commonContactdisplayName = devContact.displayName;
+                String commonContactphoneNumber = devContact.phoneNumber; //+233
+                String phoneNumberComparableValue =
+                    getComparableValue(commonContactphoneNumber);
 
-              DeviceContact commonContact = new DeviceContact(commonContactdisplayName,commonContactphoneNumber,phoneNumberComparableValue);
-              syncedContacts.add(commonContact);
+                DeviceContact commonContact = new DeviceContact(
+                    commonContactdisplayName,
+                    commonContactphoneNumber,
+                    phoneNumberComparableValue);
+                syncedContacts.add(commonContact);
 
-              print("Matched Contacts :=>> "+devContact.displayName+ "("+ devContact.phoneNumber+ ")" + 'and' +fireContact.phoneNumber);
-              
-            }
+                print("Matched Contacts :=>> " +
+                    devContact.displayName +
+                    "(" +
+                    devContact.phoneNumber +
+                    ")" +
+                    'and' +
+                    fireContact.phoneNumber);
+              }
+            });
           });
-        });
 
+          print("<<ALL MATCHED CONTACTS>>");
+          syncedContacts.forEach((syncedContact) {
+            /* SAVING THE SYNCED CONTACT IN THE DATABASE */
+            db.saveSyncedContact(syncedContact);
+            print(syncedContact.displayName +
+                "(" +
+                syncedContact.phoneNumber +
+                ")");
+          });
 
-        print("<<ALL MATCHED CONTACTS>>");
-        syncedContacts.forEach((con){
-        
-          print(con.displayName+"("+con.phoneNumber+")");
-        });
-         result = true;
-        }
-        else
-        {
-           result = false;
+          result = true;
+        } else {
+          result = false;
         } //end of IF
-       
-       
       });
-
-
     });
 
     return result;

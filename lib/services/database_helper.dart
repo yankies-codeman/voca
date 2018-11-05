@@ -33,8 +33,12 @@ class DatabaseHelper{
   }
 
   void _onCreate(Database db,int version) async{
-    String initializationQuery = "CREATE TABLE SyncedContact(id INTEGER PRIMARY KEY, DisplayName TEXT, PhoneNumber TEXT)";
-    await db.execute(initializationQuery);
+    String syncedContactCreationQuery = "CREATE TABLE SyncedContact(id INTEGER PRIMARY KEY, DisplayName TEXT, PhoneNumber TEXT)";
+    String vocaMessagesQuery = "CREATE TABLE VocaMessages(id INTEGER PRIMARY KEY, Sender TEXT, Recipient TEXT,TEXT Recipient, TEXT TimeSent, TEXT TimeReceived)";
+    await db.execute(syncedContactCreationQuery).then((result){
+         db.execute(vocaMessagesQuery);
+    });
+
     print("Database initialized");
   }
 
