@@ -1,31 +1,48 @@
 import 'package:flutter/material.dart';
 import '../services/contactsService.dart';
+import '../models/device_contact.dart';
+import '../ui/contact_list_item.dart';
 
 class ContactsPage extends StatefulWidget {
-
-  // final RefreshContacts 
+final List<DeviceContact> refreshedContacts;
   // ContactsPage();
   // ContactsPage();
 
+  ContactsPage(this.refreshedContacts);
 
-  _ContactsPageState createState() => _ContactsPageState(); 
+  _ContactsPageState createState() => _ContactsPageState();
 }
 
 class _ContactsPageState extends State<ContactsPage> {
- ContactService contactService;
+  List<DeviceContact> _refreshedContacts;
 
-@override
-void initState() {
+  @override
+  void initState() {
     super.initState();
-    contactService = ContactService().getInstance();
+    _refreshedContacts = widget.refreshedContacts;
   }
 
   @override
   Widget build(BuildContext context) {
-     return Container(   
-      child: Center(
-        child:Text('Contacts Section'),
-      ),
-    );
+    if (_refreshedContacts == null) {
+      return Container(
+        child: Center(
+          child: Text('No synced contacts yet. Tap the sync button.'),
+        ),
+      );
+    } else {
+      return ListView(
+          //type: MaterialListType.twoLine,
+          padding: new EdgeInsets.symmetric(vertical: 8.0),
+          children: _buildContactList());
+    }
+  }
+
+  _buildContactList() {
+    var contactListItems = new List<ContactListItem>();
+    for (var contact in _refreshedContacts) {
+      contactListItems.add(new ContactListItem(contact));
+    }
+    return contactListItems;
   }
 }

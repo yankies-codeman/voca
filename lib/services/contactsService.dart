@@ -189,10 +189,6 @@ Future <List<DeviceContact>> getSavedSyncedContacts () async{
           syncedContacts.forEach((syncedContact) {
             /* SAVING THE SYNCED CONTACT IN THE DATABASE */
             db.saveSyncedContact(syncedContact);
-            print(syncedContact.displayName +
-                "(" +
-                syncedContact.phoneNumber +
-                ")");
           });
 
           result = true;

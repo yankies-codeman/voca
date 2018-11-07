@@ -150,7 +150,7 @@ class ProgressButton extends StatefulWidget {
 class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
 
   SharedPrefSingleton prefs;
-  VocaUser _newUser;
+VocaUser _newUser;
   BuildContext _context;
   ContactService contactService;
   bool _isPressed = false, _animatingReveal = false;

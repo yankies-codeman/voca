@@ -7,6 +7,7 @@ import '../pages/talk-page.dart';
 import '../pages/messages-page.dart';
 import '../pages/contacts-page.dart';
 import '../pages/emergency-page.dart';
+import '../models/device_contact.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int currentTab;
+  bool contactsLoaded = false;
   SharedPrefSingleton prefs;
   TalkPage talkPage;
   MessagesPage messagesPage;
@@ -23,20 +25,33 @@ class _HomePageState extends State<HomePage> {
   List<Widget> pages;
   Widget currentPage;
   ContactService contactService;
+  List<DeviceContact> refreshedContacts;
+
+  refreshPages() {
+    talkPage = new TalkPage();
+    messagesPage = new MessagesPage();
+    emergencyPage = new EmergencyPage();
+    currentPage = messagesPage;
+    contactsPage = new ContactsPage(refreshedContacts);
+
+    pages = [talkPage, messagesPage, contactsPage, emergencyPage];
+  }
 
   @override
   initState() {
     super.initState();
-    currentTab = 1;
+    contactService = ContactService().getInstance();
     prefs = SharedPrefSingleton().getInstance();
-    talkPage = new TalkPage();
-    messagesPage = new MessagesPage();
-    contactsPage = new ContactsPage();
-    emergencyPage = new EmergencyPage();
-    currentPage = messagesPage;
-    contactService = ContactService().getInstance();     
+    contactService.getSavedSyncedContacts().then((data) {
+      setState(() {
+        refreshedContacts = data;
+        contactsLoaded = true;
+      });
+      refreshPages();
+    });
 
-    pages = [talkPage, messagesPage, contactsPage, emergencyPage];
+    currentTab = 1;
+    refreshPages();
   }
 
   // refreshSavedContacts(){
@@ -103,45 +118,35 @@ class _HomePageState extends State<HomePage> {
           title: Text(_text, style: new TextStyle(color: Colors.blue)));
     }
 
-    changeFloatingAction(){
-      
+    changeFloatingAction() {
       IconData icon;
       Function fabAction;
 
-      if(currentPage == messagesPage)
-      {
-          icon = Icons.message;
-          fabAction = () => print("message fab tapped!");
-      }
-      else if(currentPage == contactsPage)
-      {
+      if (currentPage == messagesPage) {
+        icon = Icons.message;
+        fabAction = () => print("message fab tapped!");
+      } else if (currentPage == contactsPage) {
         icon = Icons.sync;
-        fabAction = () =>  contactService.getSavedSyncedContacts().then((data){
-          print(data);
-         
-        }); 
-      }
-      else if(currentPage == emergencyPage)
-      {
+        fabAction = () => contactService.syncContacts().then((data) {
+              print(data);
+            });
+      } else if (currentPage == emergencyPage) {
         icon = Icons.add;
-          fabAction = () => print("emergency fab tapped!");
+        fabAction = () => print("emergency fab tapped!");
       }
       // contactService.syncContacts()
       //   .then((result){
       //     print("contact sync worked!");
-      //   });  
+      //   });
 
-    return  FloatingActionButton(
-        child: Icon(icon),
-        onPressed: fabAction
-    );
-    
+      return FloatingActionButton(child: Icon(icon), onPressed: fabAction);
     }
 
     return new Scaffold(
       appBar: new AppBar(title: new Text('Voca'), centerTitle: true),
       body: currentPage,
-      floatingActionButton: currentPage == talkPage ? null : changeFloatingAction(),
+      floatingActionButton:
+          currentPage == talkPage ? null : changeFloatingAction(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.shifting,
@@ -159,7 +164,6 @@ class _HomePageState extends State<HomePage> {
             generateNavItem(Icons.account_box, "Contacts"),
             generateNavItem(Icons.explicit, "I.C.E"),
           ]),
- 
     );
   }
 }
