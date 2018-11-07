@@ -8,6 +8,7 @@ import '../pages/messages-page.dart';
 import '../pages/contacts-page.dart';
 import '../pages/emergency-page.dart';
 import '../models/device_contact.dart';
+import '../models/message_list_display_item.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -26,10 +27,11 @@ class _HomePageState extends State<HomePage> {
   Widget currentPage;
   ContactService contactService;
   List<DeviceContact> refreshedContacts;
+  List<MessageListDisplayItem> refreshedMessages;
 
   refreshPages() {
     talkPage = new TalkPage();
-    messagesPage = new MessagesPage();
+    messagesPage = new MessagesPage(refreshedMessages);
     emergencyPage = new EmergencyPage();
     currentPage = messagesPage;
     contactsPage = new ContactsPage(refreshedContacts);
@@ -40,6 +42,9 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
+
+    //TODO: Create a Message Service and Emergency Contact Service to interact with the DB(more like Repositories)
+
     contactService = ContactService().getInstance();
     prefs = SharedPrefSingleton().getInstance();
     contactService.getSavedSyncedContacts().then((data) {
@@ -127,8 +132,11 @@ class _HomePageState extends State<HomePage> {
         fabAction = () => print("message fab tapped!");
       } else if (currentPage == contactsPage) {
         icon = Icons.sync;
-        fabAction = () => contactService.syncContacts().then((data) {
+        fabAction = () =>  contactService.syncContacts().then((data) {
+              //TODO: change the state of the contacts view by hiding the FAB button 
+              //and displaying a loader on top of the page until the syn is complete
               print(data);
+               contactsLoaded = true;
             });
       } else if (currentPage == emergencyPage) {
         icon = Icons.add;

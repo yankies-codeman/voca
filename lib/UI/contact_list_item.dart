@@ -11,7 +11,7 @@ final DeviceContact _savedSyncedContact;
   Widget build(BuildContext context) {
    return ListTile(
       leading: new CircleAvatar(
-        CbackgroundColor: Colors.blue,
+        backgroundColor: Colors.blue,
         child: new Text(_savedSyncedContact.nameLeadingAlphabet)
       ),
       title: new Text(_savedSyncedContact.displayName),
