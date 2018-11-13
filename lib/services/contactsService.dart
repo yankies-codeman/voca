@@ -108,7 +108,7 @@ class ContactService {
         .getDocuments()
         .then((data) {
       data.documents.forEach((doc) {
-        print("Firestore => " + doc["FirstName"] + ": " + doc["PhoneNumber"]);
+       // print("Firestore => " + doc["FirstName"] + ": " + doc["PhoneNumber"]);
         String _phoneNumber = doc["PhoneNumber"];
         if (_phoneNumber != null) {
           FirestoreContact currentFirestoreContact = new FirestoreContact();
@@ -118,7 +118,7 @@ class ContactService {
           fireStoreContacts.add(currentFirestoreContact);
         }
       });
-      print('FireStore contacts are in!');
+      //print('FireStore contacts are in!');
     });
 
     return fireStoreContacts;
@@ -148,18 +148,18 @@ Future <List<DeviceContact>> getSavedSyncedContacts () async{
       getFirestoreContacts().then((allFireStoreContacts) {
         fireStoreContacts = allFireStoreContacts;
 
-        print(allFireStoreContacts);
-        print('got into the this part');
+       // print(allFireStoreContacts);
+       // print('got into the this part');
 
         if (allDeviceContacts != null && allFireStoreContacts != null) {
           //BRAIN OF SYNCING
           deviceContacts.forEach((devContact) {
             fireStoreContacts.forEach((fireContact) {
-              print(devContact.displayName +
-                  "(" +
-                  devContact.phoneNumberComparableValue +
-                  ")" ' : Against : ' +
-                  fireContact.phoneNumberComparableValue);
+              // print(devContact.displayName +
+              //     "(" +
+              //     devContact.phoneNumberComparableValue +
+              //     ")" ' : Against : ' +
+              //     fireContact.phoneNumberComparableValue);
 
               if (devContact.phoneNumberComparableValue ==
                   fireContact.phoneNumberComparableValue) {
@@ -174,22 +174,19 @@ Future <List<DeviceContact>> getSavedSyncedContacts () async{
                     phoneNumberComparableValue);
                 syncedContacts.add(commonContact);
 
-                print("Matched Contacts :=>> " +
-                    devContact.displayName +
-                    "(" +
-                    devContact.phoneNumber +
-                    ")" +
-                    'and' +
-                    fireContact.phoneNumber);
+                // print("Matched Contacts :=>> " +
+                //     devContact.displayName +
+                //     "(" +
+                //     devContact.phoneNumber +
+                //     ")" +
+                //     'and' +
+                //     fireContact.phoneNumber);
               }
             });
           });
 
-          print("<<ALL MATCHED CONTACTS>>");
-          syncedContacts.forEach((syncedContact) {
-            /* SAVING THE SYNCED CONTACT IN THE DATABASE */
-            db.saveSyncedContact(syncedContact);
-          });
+          // print("<<ALL MATCHED CONTACTS>>");
+           db.saveSyncedContact(syncedContacts);
 
           result = true;
         } else {

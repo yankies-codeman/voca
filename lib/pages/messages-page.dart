@@ -21,7 +21,7 @@ class _MessagesPageState extends State<MessagesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_messagesList == null) {
+    if (_messagesList == null) { //_messagesList.length == 0
       return Container(
         child: Center(
           child:

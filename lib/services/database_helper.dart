@@ -44,24 +44,68 @@ class DatabaseHelper {
     print("Database initialized");
   }
 
-  Future<int> saveSyncedContact(DeviceContact _syncedContact) async {
-    print(_syncedContact.displayName + ' is ENTERING DB');
-    DeviceContact existingContact;
+  Future<int> saveSyncedContact(List<DeviceContact> _syncedContacts) async {
+    print(' is ENTERING DB');
 
-    getContact(_syncedContact.phoneNumber).then((result) {
-      existingContact = result;
+    List<DeviceContact> availableSyncedContacts = [];
+    List<DeviceContact> newContacts = [];
+    List<DeviceContact> incomingContacts = _syncedContacts;
+
+    var result;
+
+    db.then((db) {
+      var dbClient = db;
+      retrieveSyncedContact().then((data) {
+        bool alreadyExists = false;
+        availableSyncedContacts = data;
+        DeviceContact incomingContact;
+
+        if (availableSyncedContacts.length > 0) {
+          incomingContacts.forEach((incomingCon) {
+            availableSyncedContacts.forEach((syncContact) {
+              incomingContact = incomingCon;
+              print(incomingCon.phoneNumberComparableValue + "against" + syncContact.phoneNumberComparableValue);
+              if (syncContact.phoneNumberComparableValue ==
+                  incomingContact.phoneNumberComparableValue) {
+                alreadyExists = true;
+              }
+            });
+            if (!alreadyExists) {
+              newContacts.add(incomingContact);
+            }
+          });
+
+          newContacts.forEach((contact){
+            dbClient.insert("SyncedContact", contact.toMap()).then((data) {
+              result = data;
+              print('RESULT OF ENTRY: ' + result.toString());
+            });
+          });
+        } else {
+          _syncedContacts.forEach((data) {
+            dbClient.insert("SyncedContact", data.toMap()).then((data) {
+              result = data;
+              print('RESULT OF ENTRY: ' + result.toString());
+            });
+          });
+        }
+      });
     });
-    if (existingContact != null) {
-      var dbClient = await db;
-      int result =
-          await dbClient.insert("SyncedContact", _syncedContact.toMap());
 
-      print('RESULT OF ENTRY: ' + result.toString());
-      return result;
-    } else {
-      print(_syncedContact.displayName+' already exists in the DB');
-      return 0;  
-    }
+    // getContact(_syncedContact.phoneNumber).then((result) {
+    //   existingContact = result;
+    //   if (existingContact == null) {
+    //     dbClient
+    //         .insert("SyncedContact", _syncedContact.toMap())
+    //         .then((data) {});
+
+    //     print('RESULT OF ENTRY: ' + result.toString());
+    //     return result;
+    //   } else {
+    //     print(_syncedContact.displayName + ' already exists in the DB');
+    //     return 0;
+    //   }
+    // });
   }
 
   // Future<List> getAllNotes() async {
@@ -88,16 +132,25 @@ class DatabaseHelper {
 
   Future<DeviceContact> getContact(String _phoneNumber) async {
     var dbClient = await db;
-    List<Map> result = await dbClient.query("SyncedContact",
-        columns: ["PhoneNumber"],
-        where: 'PhoneNumber = ?',
-        whereArgs: [_phoneNumber]);
-//    var result = await dbClient.rawQuery('SELECT * FROM $tableNote WHERE $columnId = $id');
+    var result;
+    // List<Map> result = await dbClient.query("SyncedContact",
+    //     columns: ["PhoneNumber"],
+    //     where: 'PhoneNumber = ?',
+    //     whereArgs: [_phoneNumber]);
+    //var result = await dbClient.rawQuery('SELECT * FROM SyncedContact WHERE PhoneNumber = $_phoneNumber');
+    dbClient
+        .rawQuery(
+            'SELECT * FROM SyncedContact WHERE PhoneNumber = $_phoneNumber')
+        .then((data) {
+      result = data;
+      print('database result:');
+      print(result);
+    });
 
-    if (result.length > 0) {
-      return DeviceContact.fromMap(result.first);
+    if (result == null) {
+      return null;
     }
 
-    return null;
+    return DeviceContact.fromMap(result.first);
   }
 }

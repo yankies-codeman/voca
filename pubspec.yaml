@@ -27,6 +27,7 @@ dependencies:
   contacts_service:
   path_provider: '>= 0.4.0'
   sqflite: any
+  scoped_model: ^0.3.0
 
 dev_dependencies:
   flutter_test:

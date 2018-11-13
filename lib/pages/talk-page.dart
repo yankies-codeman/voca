@@ -9,7 +9,14 @@ class _TalkPageState extends State<TalkPage> {
   Widget build(BuildContext context) {
      return Container(   
       child: Center(
-        child:Text('Talk Page Section'),
+        child: InkWell(
+          child: Center(
+            child: Container(
+              child:  Icon(Icons.speaker,size: 350,color: Colors.blue,),
+            ),
+          ),
+            onTap: () => {},
+        ),
       ),
     );
   }

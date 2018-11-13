@@ -8,6 +8,8 @@ import '../pages/messages-page.dart';
 import '../pages/contacts-page.dart';
 import '../pages/emergency-page.dart';
 import '../models/device_contact.dart';
+import '../models/voca_app_state.dart';
+import 'package:scoped_model/scoped_model.dart';
 import '../models/message_list_display_item.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentTab;
   bool contactsLoaded = false;
+  VocaAppState currentAppState = VocaAppState(true);
   SharedPrefSingleton prefs;
   TalkPage talkPage;
   MessagesPage messagesPage;
@@ -28,15 +31,22 @@ class _HomePageState extends State<HomePage> {
   ContactService contactService;
   List<DeviceContact> refreshedContacts;
   List<MessageListDisplayItem> refreshedMessages;
+  int currentPageIndex;
 
   refreshPages() {
-    talkPage = new TalkPage();
-    messagesPage = new MessagesPage(refreshedMessages);
-    emergencyPage = new EmergencyPage();
-    currentPage = messagesPage;
-    contactsPage = new ContactsPage(refreshedContacts);
+    setState(() {
+      talkPage = new TalkPage();
+      messagesPage = new MessagesPage(refreshedMessages);
+      emergencyPage = new EmergencyPage();
 
-    pages = [talkPage, messagesPage, contactsPage, emergencyPage];
+      contactsPage = new ContactsPage(refreshedContacts);
+
+      pages = [talkPage, messagesPage, contactsPage, emergencyPage];
+      currentTab = currentPageIndex;
+      currentPage = pages[currentPageIndex];
+
+      print(currentPage);
+    });
   }
 
   @override
@@ -44,18 +54,17 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     //TODO: Create a Message Service and Emergency Contact Service to interact with the DB(more like Repositories)
-
     contactService = ContactService().getInstance();
     prefs = SharedPrefSingleton().getInstance();
     contactService.getSavedSyncedContacts().then((data) {
       setState(() {
         refreshedContacts = data;
-        contactsLoaded = true;
+        currentAppState.setIsgettingContacts = false;
       });
       refreshPages();
     });
-
-    currentTab = 1;
+    currentPageIndex = 1;
+    currentTab = currentPageIndex;
     refreshPages();
   }
 
@@ -127,51 +136,60 @@ class _HomePageState extends State<HomePage> {
       IconData icon;
       Function fabAction;
 
+      contactsPageFabAction() {
+        setState(() {
+          currentAppState.setIsgettingContacts = true;
+        });
+        contactService.syncContacts().then((data) {
+          if (data == true) {
+            setState(() {
+              currentAppState.setIsgettingContacts = false;
+            });
+          }
+        });
+      }
+
       if (currentPage == messagesPage) {
         icon = Icons.message;
         fabAction = () => print("message fab tapped!");
       } else if (currentPage == contactsPage) {
         icon = Icons.sync;
-        fabAction = () =>  contactService.syncContacts().then((data) {
-              //TODO: change the state of the contacts view by hiding the FAB button 
-              //and displaying a loader on top of the page until the syn is complete
-              print(data);
-               contactsLoaded = true;
-            });
+        fabAction = () => contactsPageFabAction();
       } else if (currentPage == emergencyPage) {
         icon = Icons.add;
         fabAction = () => print("emergency fab tapped!");
       }
-      // contactService.syncContacts()
-      //   .then((result){
-      //     print("contact sync worked!");
-      //   });
-
+      if (currentAppState.isgettingContacts == true) {
+        return null;
+      }
       return FloatingActionButton(child: Icon(icon), onPressed: fabAction);
     }
 
-    return new Scaffold(
-      appBar: new AppBar(title: new Text('Voca'), centerTitle: true),
-      body: currentPage,
-      floatingActionButton:
-          currentPage == talkPage ? null : changeFloatingAction(),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.shifting,
-          fixedColor: Colors.blue,
-          currentIndex: currentTab,
-          onTap: (int index) {
-            setState(() {
-              currentTab = index;
-              currentPage = pages[index];
-            });
-          },
-          items: <BottomNavigationBarItem>[
-            generateNavItem(Icons.phonelink_ring, "Talk"),
-            generateNavItem(Icons.message, "Messages"),
-            generateNavItem(Icons.account_box, "Contacts"),
-            generateNavItem(Icons.explicit, "I.C.E"),
-          ]),
-    );
+    return ScopedModel<VocaAppState>(
+        model: currentAppState,
+        child: new Scaffold(
+          appBar: new AppBar(title: new Text('Voca'), centerTitle: true),
+          body: currentPage,
+          floatingActionButton:
+              currentPage == talkPage ? null : changeFloatingAction(),
+          // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.shifting,
+              fixedColor: Colors.blue,
+              currentIndex: currentTab,
+              onTap: (int index) {
+                setState(() {
+                  currentPageIndex = index;
+                  currentTab = index;
+                  currentPage = pages[index];
+                });
+              },
+              items: <BottomNavigationBarItem>[
+                generateNavItem(Icons.phonelink_ring, "Talk"),
+                generateNavItem(Icons.message, "Messages"),
+                generateNavItem(Icons.account_box, "Contacts"),
+                generateNavItem(Icons.explicit, "I.C.E"),
+              ]),
+        ));
   }
 }
