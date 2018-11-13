@@ -63,6 +63,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
     Widget contactList = ListView(
         //type: MaterialListType.twoLine,
+        shrinkWrap: false,
         padding: new EdgeInsets.symmetric(vertical: 8.0),
         children: buildContactList());
 
@@ -70,7 +71,9 @@ class _ContactsPageState extends State<ContactsPage> {
       builder: (context, child, model) => Column(
             children: <Widget>[
               checkLoading(model.isgettingContacts),
-              _refreshedContacts.length == 0 ? emptyMessage : contactList
+              Expanded(
+                child: _refreshedContacts.length == 0 ? emptyMessage : contactList,
+                )
             ],
           ),
     );

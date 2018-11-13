@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   ContactService contactService;
   List<DeviceContact> refreshedContacts;
   List<MessageListDisplayItem> refreshedMessages;
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int currentPageIndex;
 
   refreshPages() {
@@ -65,6 +66,7 @@ class _HomePageState extends State<HomePage> {
     });
     currentPageIndex = 1;
     currentTab = currentPageIndex;
+   
     refreshPages();
   }
 
@@ -145,7 +147,9 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               currentAppState.setIsgettingContacts = false;
             });
-          }
+             SnackBar snackBar = SnackBar(content: Text('Contacts sync complete!'));
+           _scaffoldKey.currentState.showSnackBar(snackBar);
+          }          
         });
       }
 
@@ -168,6 +172,7 @@ class _HomePageState extends State<HomePage> {
     return ScopedModel<VocaAppState>(
         model: currentAppState,
         child: new Scaffold(
+          key: _scaffoldKey,
           appBar: new AppBar(title: new Text('Voca'), centerTitle: true),
           body: currentPage,
           floatingActionButton:

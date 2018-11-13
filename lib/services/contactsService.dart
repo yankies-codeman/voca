@@ -186,15 +186,21 @@ Future <List<DeviceContact>> getSavedSyncedContacts () async{
           });
 
           // print("<<ALL MATCHED CONTACTS>>");
-           db.saveSyncedContact(syncedContacts);
-
-          result = true;
+           db.saveSyncedContact(syncedContacts).then((data){
+             result = data;
+             print('Everything is done : >>>>>>><<<<<<<<<<<<<<<< ');
+              print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
+              return result;
+           });
+        
         } else {
           result = false;
+           print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
+            return result;
         } //end of IF
       });
     });
 
-    return result;
+   
   }
 }
