@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+//TODO: ADD REFRESHED MESSAGES AND OTHER THINGS TO SCOPED MODEL
 class _HomePageState extends State<HomePage> {
   int currentTab;
   bool contactsLoaded = false;
@@ -138,16 +139,25 @@ class _HomePageState extends State<HomePage> {
       IconData icon;
       Function fabAction;
 
-      contactsPageFabAction() {
+      contactsPageFabAction() async {
         setState(() {
           currentAppState.setIsgettingContacts = true;
         });
-        contactService.syncContacts().then((data) {
+       await contactService.syncContacts().then((data) {
+
+         print(data);
           if (data == true) {
             setState(() {
               currentAppState.setIsgettingContacts = false;
             });
              SnackBar snackBar = SnackBar(content: Text('Contacts sync complete!'));
+           _scaffoldKey.currentState.showSnackBar(snackBar);
+          }
+          else{
+               setState(() {
+              currentAppState.setIsgettingContacts = false;
+            });
+             SnackBar snackBar = SnackBar(content: Text("Couldn't sync! Check connection."));
            _scaffoldKey.currentState.showSnackBar(snackBar);
           }          
         });

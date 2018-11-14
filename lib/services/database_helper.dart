@@ -45,82 +45,70 @@ class DatabaseHelper {
   }
 
   Future<bool> saveSyncedContact(List<DeviceContact> _syncedContacts) async {
-    print(' is ENTERING DB');
-
     List<DeviceContact> availableSyncedContacts = [];
     List<DeviceContact> newContacts = [];
     List<DeviceContact> incomingContacts = _syncedContacts;
+    var dbClient;
+    bool alreadyExists = false;
+    DeviceContact incomingContact;
+    bool result;
 
-    var result;
+    dbClient = await db;
+    availableSyncedContacts = await retrieveSyncedContact();
 
-    db.then((db) {
-      var dbClient = db;
-      retrieveSyncedContact().then((data) {
-        bool alreadyExists = false;
-        availableSyncedContacts = data;
-        DeviceContact incomingContact;
+    if (availableSyncedContacts.length > 0) {
+      incomingContacts.forEach((incomingCon) {
+        availableSyncedContacts.forEach((syncCon) {
+          incomingContact = incomingCon;
 
-        if (availableSyncedContacts.length > 0) {
-          incomingContacts.forEach((incomingCon) {
-            availableSyncedContacts.forEach((syncCon) {
-              incomingContact = incomingCon;
+          print(incomingCon.getComparableValue() +
+              " >against< " +
+              syncCon.getComparableValue());
+          if (syncCon.getComparableValue() ==
+              incomingContact.getComparableValue()) {
+            alreadyExists = true;
 
-              print(incomingCon.getComparableValue() +
-                  " >against< " +
-                  syncCon.getComparableValue());
-              if (syncCon.getComparableValue() ==
-                  incomingContact.getComparableValue()) {
-                alreadyExists = true;
-
-                print(syncCon.getComparableValue().toString() +
-                    " ALREADY EXISTS");
-              }
-            });
-
-            if (!alreadyExists) {
-              newContacts.add(incomingContact);
-            }
-
-            print('Resetting alreadyExists');
-            //RESETTING alreadyExists
-            alreadyExists = false;
-          });
-
-          print("New contacts lenght: " + newContacts.length.toString());
-          print(newContacts);
-          print('About to do Inserting =><<<<<<<<<<<<<<<< ');
-
-           if(newContacts.length > 0) {
-            print('>>>>>>>>>>>>>>>>>>> Inserting =><<<<<<<<<<<<<<<< ');
-            newContacts.forEach((contact) {
-              print('Inserting => ' + contact.phoneNumber);
-              dbClient.insert("SyncedContact", contact.toMap()).then((data) {
-                result = true;
-                print('RESULT OF ENTRY: ' + result.toString());
-              });
-            });
-          } else {
-            print('Nothing to  INSERT INTO DB ');
-            result = true;
+            print(syncCon.getComparableValue().toString() + " ALREADY EXISTS");
           }
-        } else {
-          _syncedContacts.forEach((data) {
-            dbClient.insert("SyncedContact", data.toMap()).then((data) {
-              result = true;
-              print('RESULT OF ENTRY: ' + result.toString());
-            });
-          });
+        });
+
+        if (!alreadyExists) {
+          newContacts.add(incomingContact);
         }
-         return result; 
+
+        print('Resetting alreadyExists');
+        //RESETTING alreadyExists
+        alreadyExists = false;
       });
-    });
+
+      print("New contacts lenght: " + newContacts.length.toString());
+      print(newContacts);
+      print('About to do Inserting =><<<<<<<<<<<<<<<< ');
+
+      if (newContacts.length > 0) {
+        print('>>>>>>>>>>>>>>>>>>> Inserting =><<<<<<<<<<<<<<<< ');
+        newContacts.forEach((contact) {
+          print('Inserting => ' + contact.phoneNumber);
+          dbClient.insert("SyncedContact", contact.toMap()).then((data) {
+            result = true;
+            print('RESULT OF ENTRY: ' + result.toString());
+          });
+        });
+        return result;
+      } else {
+        print('Nothing to  INSERT INTO DB ');
+        result = true;
+      }
+    } else {
+      _syncedContacts.forEach((data) {
+        var numResult = dbClient.insert("SyncedContact", data.toMap());
+        print('RESULT OF ENTRY: ' + numResult.toString());
+      });
+      result = true;
+    }
+
+    return result;
   }
-
-  // Future<List> getAllNotes() async {
-  //   var result = await db.query(tableNote, columns: [columnId, columnTitle, columnDescription]);
-
-  //   return result.toList();
-  // }
 
   Future<List<DeviceContact>> retrieveSyncedContact() async {
     print('FETCHING FROM DB');
@@ -141,11 +129,6 @@ class DatabaseHelper {
   Future<DeviceContact> getContact(String _phoneNumber) async {
     var dbClient = await db;
     var result;
-    // List<Map> result = await dbClient.query("SyncedContact",
-    //     columns: ["PhoneNumber"],
-    //     where: 'PhoneNumber = ?',
-    //     whereArgs: [_phoneNumber]);
-    //var result = await dbClient.rawQuery('SELECT * FROM SyncedContact WHERE PhoneNumber = $_phoneNumber');
     dbClient
         .rawQuery(
             'SELECT * FROM SyncedContact WHERE PhoneNumber = $_phoneNumber')

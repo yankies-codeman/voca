@@ -108,7 +108,7 @@ class ContactService {
         .getDocuments()
         .then((data) {
       data.documents.forEach((doc) {
-       // print("Firestore => " + doc["FirstName"] + ": " + doc["PhoneNumber"]);
+        // print("Firestore => " + doc["FirstName"] + ": " + doc["PhoneNumber"]);
         String _phoneNumber = doc["PhoneNumber"];
         if (_phoneNumber != null) {
           FirestoreContact currentFirestoreContact = new FirestoreContact();
@@ -124,43 +124,30 @@ class ContactService {
     return fireStoreContacts;
   }
 
-Future <List<DeviceContact>> getSavedSyncedContacts () async{
-   DatabaseHelper db = new DatabaseHelper();
-     List<DeviceContact> deviceContacts = [];
+  Future<List<DeviceContact>> getSavedSyncedContacts() async {
+    DatabaseHelper db = new DatabaseHelper();
+    List<DeviceContact> deviceContacts = [];
 
-     await db.retrieveSyncedContact().then((results){
-       deviceContacts = results;
-     });
-     return deviceContacts;
-}
+    await db.retrieveSyncedContact().then((results) {
+      deviceContacts = results;
+    });
+    return deviceContacts;
+  }
 
   Future<bool> syncContacts() async {
     bool result = false;
-    List<DeviceContact> deviceContacts = [];
-    List<FirestoreContact> fireStoreContacts = [];
+    List<DeviceContact> allDeviceContacts = [];
+    List<FirestoreContact> allFireStoreContacts = [];
     List<DeviceContact> syncedContacts = [];
-     DatabaseHelper db = new DatabaseHelper();
+    DatabaseHelper db = new DatabaseHelper();
 
-    getAllDeviceContacts().then((allDeviceContacts) {
-      deviceContacts = allDeviceContacts;
-     
-
-      getFirestoreContacts().then((allFireStoreContacts) {
-        fireStoreContacts = allFireStoreContacts;
-
-       // print(allFireStoreContacts);
-       // print('got into the this part');
-
+  allDeviceContacts =  await getAllDeviceContacts();
+  allFireStoreContacts = await getFirestoreContacts();
+  
         if (allDeviceContacts != null && allFireStoreContacts != null) {
           //BRAIN OF SYNCING
-          deviceContacts.forEach((devContact) {
-            fireStoreContacts.forEach((fireContact) {
-              // print(devContact.displayName +
-              //     "(" +
-              //     devContact.phoneNumberComparableValue +
-              //     ")" ' : Against : ' +
-              //     fireContact.phoneNumberComparableValue);
-
+          allDeviceContacts.forEach((devContact) {
+            allFireStoreContacts.forEach((fireContact) {
               if (devContact.phoneNumberComparableValue ==
                   fireContact.phoneNumberComparableValue) {
                 String commonContactdisplayName = devContact.displayName;
@@ -173,34 +160,26 @@ Future <List<DeviceContact>> getSavedSyncedContacts () async{
                     commonContactphoneNumber,
                     phoneNumberComparableValue);
                 syncedContacts.add(commonContact);
-
-                // print("Matched Contacts :=>> " +
-                //     devContact.displayName +
-                //     "(" +
-                //     devContact.phoneNumber +
-                //     ")" +
-                //     'and' +
-                //     fireContact.phoneNumber);
               }
             });
           });
 
+        result = await db.saveSyncedContact(syncedContacts);
+         print('WE ARE BACK FROM THE DATABASE!');
           // print("<<ALL MATCHED CONTACTS>>");
-           db.saveSyncedContact(syncedContacts).then((data){
-             result = data;
-             print('Everything is done : >>>>>>><<<<<<<<<<<<<<<< ');
-              print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
-              return result;
-           });
-        
+          // db.saveSyncedContact(syncedContacts).then((data) {
+          //   result = data;
+          //   print('Everything is done : >>>>>>><<<<<<<<<<<<<<<< ');
+          //   print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
+          //   return result;
+          // });
+          
         } else {
           result = false;
-           print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
-            return result;
-        } //end of IF
-      });
-    });
-
-   
+          print('RETURNING FINAL RESULTS!!!!!!!!!!!!!!');
+          return result;
+        } 
+    
+    return result;
   }
 }
