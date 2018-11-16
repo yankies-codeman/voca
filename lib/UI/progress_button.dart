@@ -227,7 +227,9 @@ VocaUser _newUser;
                  prefs.setCurrentUserFirstName(_newUser.firstName).then((result){
                     prefs.setCurrentUserLastname(_newUser.lastName).then((result){
                       prefs.setCurrentUserAge(_newUser.age).then((result){
-                          finalAnimationMoment();
+                        prefs.setIsFirstTimeUsage(true).then((result){
+                           finalAnimationMoment();
+                        });  
                       });
                     });
                  });

@@ -21,7 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentTab;
   bool contactsLoaded = false;
-  VocaAppState currentAppState = VocaAppState(true);
+  VocaAppState currentAppState;
   SharedPrefSingleton prefs;
   TalkPage talkPage;
   MessagesPage messagesPage;
@@ -37,11 +37,15 @@ class _HomePageState extends State<HomePage> {
 
   refreshPages() {
     setState(() {
+      talkPage = null;
+      messagesPage = null;
+      emergencyPage = null;
+      contactsPage = null;
+
       talkPage = new TalkPage();
       messagesPage = new MessagesPage(refreshedMessages);
       emergencyPage = new EmergencyPage();
-
-      contactsPage = new ContactsPage(refreshedContacts);
+      contactsPage = new ContactsPage(currentAppState.syncedContacts);
 
       pages = [talkPage, messagesPage, contactsPage, emergencyPage];
       currentTab = currentPageIndex;
@@ -51,29 +55,73 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  syncContacts() async {
+    setState(() {
+      currentAppState.setIsSyncingContacts = true;
+    });
+    await contactService.syncContacts().then((data) {
+      if (data == true) {
+        setState(() {
+          currentAppState.setIsSyncingContacts = false;
+          refreshModelData();
+        });
+        SnackBar snackBar = SnackBar(content: Text('Contacts sync complete!'));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        setState(() {
+          currentAppState.setIsSyncingContacts = false;
+        });
+        SnackBar snackBar =
+            SnackBar(content: Text("Couldn't sync! Check connection."));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+    });
+  }
+
+   getSavedContacts() async {
+    setState(() {
+      currentAppState.setIsGettingContacts = true;
+    });
+    await contactService.getSavedSyncedContacts().then((data) {
+      setState(() {
+        currentAppState.setSyncedContacts = data;
+        currentAppState.setIsGettingContacts = false;
+      });
+      refreshPages(); //remove
+    });
+  }
+
+  refreshModelData() async {
+    getSavedContacts();
+    refreshPages();
+  }
+
+  getFirstTimeUsage() async {
+    await prefs.getIsFirstTimeUsage().then((data) {
+      currentAppState.setIsFirstTimeUsage = data;
+      if (data) {
+        syncContacts();
+        prefs.setIsFirstTimeUsage(false);
+      }
+    });
+  }
+
   @override
   initState() {
     super.initState();
 
     //TODO: Create a Message Service and Emergency Contact Service to interact with the DB(more like Repositories)
     contactService = ContactService().getInstance();
+    currentAppState = VocaAppState();
     prefs = SharedPrefSingleton().getInstance();
-    contactService.getSavedSyncedContacts().then((data) {
-      setState(() {
-        refreshedContacts = data;
-        currentAppState.setIsgettingContacts = false;
-      });
-      refreshPages();
-    });
+    // currentAppState.setIsFirstTimeUsage = false;
+    // prefs.setIsFirstTimeUsage(true);
+    getFirstTimeUsage();
+    getSavedContacts();
     currentPageIndex = 1;
     currentTab = currentPageIndex;
-   
-    refreshPages();
+    refreshPages(); //remove
   }
-
-  // refreshSavedContacts(){
-  //    contactsPage = new ContactsPage();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -141,41 +189,26 @@ class _HomePageState extends State<HomePage> {
 
       contactsPageFabAction() async {
         setState(() {
-          currentAppState.setIsgettingContacts = true;
+          currentAppState.setIsSyncingContacts = true;
         });
-       await contactService.syncContacts().then((data) {
-
-         print(data);
-          if (data == true) {
-            setState(() {
-              currentAppState.setIsgettingContacts = false;
-            });
-             SnackBar snackBar = SnackBar(content: Text('Contacts sync complete!'));
-           _scaffoldKey.currentState.showSnackBar(snackBar);
-          }
-          else{
-               setState(() {
-              currentAppState.setIsgettingContacts = false;
-            });
-             SnackBar snackBar = SnackBar(content: Text("Couldn't sync! Check connection."));
-           _scaffoldKey.currentState.showSnackBar(snackBar);
-          }          
-        });
+        syncContacts();
       }
 
       if (currentPage == messagesPage) {
         icon = Icons.message;
         fabAction = () => print("message fab tapped!");
       } else if (currentPage == contactsPage) {
-        icon = Icons.sync;
-        fabAction = () => contactsPageFabAction();
+        if (currentAppState.isSyncingContacts == true) {
+          return null;
+        } else {
+          icon = Icons.sync;
+          fabAction = () => contactsPageFabAction();
+        }
       } else if (currentPage == emergencyPage) {
         icon = Icons.add;
         fabAction = () => print("emergency fab tapped!");
       }
-      if (currentAppState.isgettingContacts == true) {
-        return null;
-      }
+
       return FloatingActionButton(child: Icon(icon), onPressed: fabAction);
     }
 

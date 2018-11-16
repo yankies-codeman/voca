@@ -70,13 +70,15 @@ class _ContactsPageState extends State<ContactsPage> {
     return ScopedModelDescendant<VocaAppState>(
       builder: (context, child, model) => Column(
             children: <Widget>[
-              checkLoading(model.isgettingContacts),
+              checkLoading(model.isSyncingContacts),
               Expanded(
                 child: _refreshedContacts.length == 0 ? emptyMessage : contactList,
                 )
             ],
           ),
     );
+
+
 
     // return Container(
 

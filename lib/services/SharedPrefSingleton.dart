@@ -43,9 +43,15 @@ class SharedPrefSingleton{
    return result;
   }
 
-  Future<String>getCurrentUserAge(String _age) async{
+  Future<String>getCurrentUserAge() async{
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String result = preferences.getString("Age");  
+    return result;
+  }
+
+  Future<bool>getIsFirstTimeUsage() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool result = preferences.getBool("IsFirstTime");  
     return result;
   }
 
@@ -86,6 +92,13 @@ class SharedPrefSingleton{
    preferences.clear();  
    return preferences.commit();
   }
+
+   Future<bool>setIsFirstTimeUsage(bool _value) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setBool("IsFirstTime",_value);  
+    return preferences.commit();
+  }
+
 
 
 
