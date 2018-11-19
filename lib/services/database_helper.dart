@@ -37,9 +37,12 @@ class DatabaseHelper {
         "CREATE TABLE SyncedContact(id INTEGER PRIMARY KEY, DisplayName TEXT, PhoneNumber TEXT)";
     String vocaMessagesQuery =
         "CREATE TABLE VocaMessages(id INTEGER PRIMARY KEY, Sender TEXT, Recipient TEXT, TimeSent TEXT,TimeReceived TEXT)";
-    await db.execute(syncedContactCreationQuery).then((result) {
-      db.execute(vocaMessagesQuery);
-    });
+    String vocaEmergencyContactsQuery =
+        "CREATE TABLE VocaEmergencyContacts(id INTEGER PRIMARY KEY, Contact TEXT, Name TEXT, Relationship TEXT)";
+
+    await db.execute(syncedContactCreationQuery);
+    await db.execute(vocaMessagesQuery);
+    await db.execute(vocaEmergencyContactsQuery);
 
     print("Database initialized");
   }

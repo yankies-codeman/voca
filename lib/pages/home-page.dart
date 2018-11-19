@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
       talkPage = new TalkPage();
       messagesPage = new MessagesPage(refreshedMessages);
       emergencyPage = new EmergencyPage();
-      contactsPage = new ContactsPage(currentAppState.syncedContacts);
+      contactsPage = new ContactsPage();
 
       pages = [talkPage, messagesPage, contactsPage, emergencyPage];
       currentTab = currentPageIndex;
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
       if (data == true) {
         setState(() {
           currentAppState.setIsSyncingContacts = false;
-          refreshModelData();
+          getSavedContacts();
         });
         SnackBar snackBar = SnackBar(content: Text('Contacts sync complete!'));
         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-   getSavedContacts() async {
+  getSavedContacts() async {
     setState(() {
       currentAppState.setIsGettingContacts = true;
     });
@@ -89,11 +89,6 @@ class _HomePageState extends State<HomePage> {
       });
       refreshPages(); //remove
     });
-  }
-
-  refreshModelData() async {
-    getSavedContacts();
-    refreshPages();
   }
 
   getFirstTimeUsage() async {
@@ -114,8 +109,7 @@ class _HomePageState extends State<HomePage> {
     contactService = ContactService().getInstance();
     currentAppState = VocaAppState();
     prefs = SharedPrefSingleton().getInstance();
-    // currentAppState.setIsFirstTimeUsage = false;
-    // prefs.setIsFirstTimeUsage(true);
+   
     getFirstTimeUsage();
     getSavedContacts();
     currentPageIndex = 1;

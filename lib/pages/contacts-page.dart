@@ -6,9 +6,10 @@ import '../models/voca_app_state.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class ContactsPage extends StatefulWidget {
-  final List<DeviceContact> refreshedContacts;
+  
+  // final List<DeviceContact> refreshedContacts; this.refreshedContacts
 
-  ContactsPage(this.refreshedContacts);
+  ContactsPage();
 
   _ContactsPageState createState() => _ContactsPageState();
 }
@@ -33,9 +34,9 @@ class _ContactsPageState extends State<ContactsPage> {
     ),
   );
 
-  buildContactList() {
+  buildContactList(List<DeviceContact> contacts) {
     var contactListItems = new List<ContactListItem>();
-    for (var contact in _refreshedContacts) {
+    for (var contact in contacts) {
       contactListItems.add(new ContactListItem(contact));
     }
     return contactListItems;
@@ -49,39 +50,42 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _refreshedContacts = widget.refreshedContacts;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget emptyMessage = Center(
-      child: Text('No synced contacts yet. Tap the sync button.'),
-    );
-
+  showContactList(List<DeviceContact> contacts) {
     Widget contactList = ListView(
         //type: MaterialListType.twoLine,
         shrinkWrap: false,
         padding: new EdgeInsets.symmetric(vertical: 8.0),
-        children: buildContactList());
+        children: buildContactList(contacts));
 
+    return contactList;
+  }
+
+  showEmptyMessage() {
+    Widget emptyMessage = Center(
+      child: Text('No synced contacts yet. Tap the sync button.'),
+    );
+    return emptyMessage;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    //_refreshedContacts = widget.refreshedContacts;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ScopedModelDescendant<VocaAppState>(
       builder: (context, child, model) => Column(
             children: <Widget>[
               checkLoading(model.isSyncingContacts),
               Expanded(
-                child: _refreshedContacts.length == 0 ? emptyMessage : contactList,
-                )
+                child: model.syncedContacts.length == 0
+                    ? showEmptyMessage()
+                    : showContactList(model.syncedContacts),
+              )
             ],
           ),
     );
-
-
-
-    // return Container(
-
-    // );
   }
 }
