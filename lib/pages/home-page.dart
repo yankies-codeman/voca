@@ -87,7 +87,6 @@ class _HomePageState extends State<HomePage> {
         currentAppState.setSyncedContacts = data;
         currentAppState.setIsGettingContacts = false;
       });
-      refreshPages(); //remove
     });
   }
 
@@ -114,8 +113,10 @@ class _HomePageState extends State<HomePage> {
     getSavedContacts();
     currentPageIndex = 1;
     currentTab = currentPageIndex;
-    refreshPages(); //remove
+    refreshPages(); 
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +207,7 @@ class _HomePageState extends State<HomePage> {
       return FloatingActionButton(child: Icon(icon), onPressed: fabAction);
     }
 
+    
     return ScopedModel<VocaAppState>(
         model: currentAppState,
         child: new Scaffold(
@@ -214,7 +216,6 @@ class _HomePageState extends State<HomePage> {
           body: currentPage,
           floatingActionButton:
               currentPage == talkPage ? null : changeFloatingAction(),
-          // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: BottomNavigationBar(
               type: BottomNavigationBarType.shifting,
               fixedColor: Colors.blue,
