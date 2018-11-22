@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io' as io;
 import '../models/device_contact.dart';
+import '../models/emergency_contact.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = new DatabaseHelper.internal();
@@ -146,5 +147,27 @@ class DatabaseHelper {
     }
 
     return DeviceContact.fromMap(result.first);
+  }
+
+  Future<int> addEmergencyContact (EmergencyContact contact) async{
+     var dbClient = await db;
+     var result = dbClient.insert("VocaEmergencyContacts", contact.toMap());
+    print(result);
+    return result;
+  }
+
+  Future<List<EmergencyContact>> retrieveEmergencyContacts() async{
+    List<EmergencyContact> savedEmergencyContacts = [];
+
+    var dbClient = await db;
+    var result = await dbClient
+        .query("VocaEmergencyContacts", columns: ['id', 'Contact', 'Relationship']);
+
+    result.toList().forEach((res) {
+      EmergencyContact contact = EmergencyContact.fromMap(res);
+      savedEmergencyContacts.add(contact);
+    });
+
+    return savedEmergencyContacts;
   }
 }

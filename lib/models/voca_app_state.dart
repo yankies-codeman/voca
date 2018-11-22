@@ -6,15 +6,21 @@ class VocaAppState extends Model {
   bool _isGettingContacts;
   bool _isSyncingContacts;
   bool _isFirstTimeUsage;
+  bool _addNewEmergencyNumber;
 
   List<EmergencyContact> _emergencyContacts = [];
   List<DeviceContact> _syncedContacts = [];
 
   VocaAppState();
 
-  set setIsFirstTimeUsage(bool value){
+  set setAddingNewEmergencyNumber(bool value) {
+    _addNewEmergencyNumber = value;
+    notifyListeners();
+  }
+
+  set setIsFirstTimeUsage(bool value) {
     _isFirstTimeUsage = value;
-     notifyListeners();
+    notifyListeners();
   }
 
   set setIsGettingContacts(bool value) {
@@ -33,14 +39,15 @@ class VocaAppState extends Model {
     notifyListeners();
   }
 
-  set setEmergencyContacts(List<EmergencyContact> value){
+  set setEmergencyContacts(List<EmergencyContact> value) {
     _emergencyContacts = value;
   }
 
   bool get isGettingContacts => _isGettingContacts;
   bool get isSyncingContacts => _isSyncingContacts;
-  bool get isFirstTimeUsage  => _isFirstTimeUsage;
-  
-  List<EmergencyContact>  get savedEmergencyContacts => _emergencyContacts;
+  bool get isFirstTimeUsage => _isFirstTimeUsage;
+  bool get isAddingNewEmergencyNumber => _addNewEmergencyNumber;
+
+  List<EmergencyContact> get savedEmergencyContacts => _emergencyContacts;
   List<DeviceContact> get syncedContacts => _syncedContacts;
 }

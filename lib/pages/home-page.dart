@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:scoped_model/scoped_model.dart';
 import '../services/SharedPrefSingleton.dart';
 import '../services/contactsService.dart';
+import '../services/emergency_contact_service.dart';
 
 import '../pages/talk-page.dart';
 import '../pages/messages-page.dart';
@@ -9,8 +11,10 @@ import '../pages/contacts-page.dart';
 import '../pages/emergency-page.dart';
 import '../models/device_contact.dart';
 import '../models/voca_app_state.dart';
-import 'package:scoped_model/scoped_model.dart';
+import '../ui/modal.dart';
 import '../models/message_list_display_item.dart';
+import '../models/emergency_contact.dart';
+import '../UI/emergencySubmitLoaderOverlay.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,10 +33,17 @@ class _HomePageState extends State<HomePage> {
   EmergencyPage emergencyPage;
   List<Widget> pages;
   Widget currentPage;
+  Modal emergencyContactModal;
+  EmergencyContactService emergencyContactService = EmergencyContactService();
   ContactService contactService;
   List<DeviceContact> refreshedContacts;
   List<MessageListDisplayItem> refreshedMessages;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  List<String> _relationships;
+  String _currentSelectedRelationShipItem;
+  EmergencyContact newEmergencyContact;
+  bool showLoader;
+
   int currentPageIndex;
 
   refreshPages() {
@@ -41,11 +52,14 @@ class _HomePageState extends State<HomePage> {
       messagesPage = null;
       emergencyPage = null;
       contactsPage = null;
-
       talkPage = new TalkPage();
       messagesPage = new MessagesPage(refreshedMessages);
       emergencyPage = new EmergencyPage();
       contactsPage = new ContactsPage();
+      _relationships = ['Parent', 'Sibling', 'Gaurdian'];
+      _currentSelectedRelationShipItem = null;
+      newEmergencyContact = EmergencyContact();
+      showLoader = false;
 
       pages = [talkPage, messagesPage, contactsPage, emergencyPage];
       currentTab = currentPageIndex;
@@ -90,6 +104,38 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  getSavedEmergencyContacts() async {
+    setState(() {
+      //currentAppState.setIsGettingContacts = true;
+    });
+    await emergencyContactService.getSavedEmergencyContacts().then((data) {
+      setState(() {
+        currentAppState.setEmergencyContacts = data;
+        //currentAppState.setIsGettingContacts = false;
+      });
+    });
+  }
+
+  saveEmergencyContact() async {
+    setState(() {
+      //currentAppState.setIsGettingContacts = true;
+    });
+    await emergencyContactService.addNew(newEmergencyContact).then((data) {
+      if (data) {
+        getSavedEmergencyContacts();
+        setState(() {
+          //currentAppState.setEmergencyContacts = data;
+          //currentAppState.setIsGettingContacts = false;
+        });
+        SnackBar snackBar = SnackBar(content: Text('Contact added!'));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      } else {
+        SnackBar snackBar = SnackBar(content: Text("Error! Couldn't save."));
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+    });
+  }
+
   getFirstTimeUsage() async {
     await prefs.getIsFirstTimeUsage().then((data) {
       currentAppState.setIsFirstTimeUsage = data;
@@ -105,18 +151,19 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     //TODO: Create a Message Service and Emergency Contact Service to interact with the DB(more like Repositories)
+    emergencyContactService = EmergencyContactService();
     contactService = ContactService().getInstance();
     currentAppState = VocaAppState();
     prefs = SharedPrefSingleton().getInstance();
-   
+
     getFirstTimeUsage();
     getSavedContacts();
+    getSavedEmergencyContacts();
     currentPageIndex = 1;
     currentTab = currentPageIndex;
-    refreshPages(); 
+    refreshPages();
+    currentAppState.setAddingNewEmergencyNumber = false;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +215,124 @@ class _HomePageState extends State<HomePage> {
     //       ),
     // );
 
+    final nameTextField = TextField(
+      keyboardType: TextInputType.text,
+      autofocus: false,
+      onChanged: (value) {
+        newEmergencyContact.setName = value;
+      },
+      decoration: InputDecoration(
+          hintText: 'Full name',
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+
+    final phoneNumberTextField = TextField(
+      keyboardType: TextInputType.number,
+      autofocus: false,
+      onChanged: (value) {
+        newEmergencyContact.setPhoneNumber = value;
+      },
+      decoration: InputDecoration(
+          hintText: 'Phone number',
+          contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+
+    final relationshipDropDownButton = DropdownButton<String>(
+      items: _relationships.map((String dropDownStringItem) {
+        return DropdownMenuItem<String>(
+            value: dropDownStringItem, child: Text(dropDownStringItem));
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          this.newEmergencyContact.setRelationship = value;
+          this._currentSelectedRelationShipItem = value;
+          print(_currentSelectedRelationShipItem);
+        });
+      },
+      hint: Text('Relationship '),
+      value: _currentSelectedRelationShipItem,
+    );
+
+    addNewEmergencyContact() {
+      setState(() {
+        showLoader = true;
+        currentAppState.setAddingNewEmergencyNumber = true;
+      });
+      print(newEmergencyContact.phoneNumber);
+      print(newEmergencyContact.name);
+      print(newEmergencyContact.relationship);
+      saveEmergencyContact();
+      print(currentAppState.isAddingNewEmergencyNumber);
+      print("submission of form");
+      //Navigator.pop(context);
+    }
+
+    final saveButton = Padding(
+      padding: EdgeInsets.symmetric(vertical: 16.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(30.0),
+        shadowColor: Colors.lightBlueAccent.shade100,
+        //elevation: 5.0,
+        child: RaisedButton(
+          color: Colors.lightBlueAccent,
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(30.0)),
+          // minWidth: 200.0,
+          // height: 42.0,
+          onPressed: addNewEmergencyContact,
+          child: Text('Add', style: TextStyle(color: Colors.white)),
+        ),
+      ),
+    );
+
+    var emergencyContactForm = ListView(
+      shrinkWrap: true,
+      padding: EdgeInsets.only(left: 24.0, right: 24.0),
+      children: <Widget>[
+        SizedBox(height: 20.0),
+        nameTextField,
+        SizedBox(height: 8.0),
+        phoneNumberTextField,
+        SizedBox(height: 10.0),
+        Row(
+          children: <Widget>[
+            Container(
+              child: Text('                       '),
+            ),
+            Center(
+              child: relationshipDropDownButton,
+            )
+          ],
+        ),
+        //SizedBox(height: 24.0),
+        saveButton,
+        SizedBox(height: 150.0),
+      ],
+    );
+
+    _showEmergencyContactForm(context) {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+                height: 700.0,
+                child: Center(
+                    child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    currentAppState.isAddingNewEmergencyNumber == true
+                        ? EmergencySubmitLoaderOverlay()
+                        : Container(),
+                    emergencyContactForm
+                  ],
+                )));
+          });
+    }
+
     generateNavItem(IconData _icon, String _text) {
       return BottomNavigationBarItem(
           icon: Icon(
@@ -189,9 +354,15 @@ class _HomePageState extends State<HomePage> {
         syncContacts();
       }
 
+      emergencyPageFabAction() {
+        _showEmergencyContactForm(context);
+      }
+
+      messagesPageFabAction() {}
+
       if (currentPage == messagesPage) {
         icon = Icons.message;
-        fabAction = () => print("message fab tapped!");
+        fabAction = () => messagesPageFabAction();
       } else if (currentPage == contactsPage) {
         if (currentAppState.isSyncingContacts == true) {
           return null;
@@ -201,13 +372,12 @@ class _HomePageState extends State<HomePage> {
         }
       } else if (currentPage == emergencyPage) {
         icon = Icons.add;
-        fabAction = () => print("emergency fab tapped!");
+        fabAction = () => emergencyPageFabAction();
       }
 
       return FloatingActionButton(child: Icon(icon), onPressed: fabAction);
     }
 
-    
     return ScopedModel<VocaAppState>(
         model: currentAppState,
         child: new Scaffold(
