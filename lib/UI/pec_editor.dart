@@ -5,7 +5,6 @@ import '../services/pec_service.dart';
 import '../UI/pec_grid_item.dart';
 import '../models/pec_symbol_text_display.dart';
 
-
 class PecEditor extends StatefulWidget {
   final String _requestPage;
 
@@ -110,13 +109,16 @@ class _PecEditorState extends State<PecEditor> {
     displayPecWordsImages();
   }
 
-  talkButtonFunction() {
+  speakButtonFunction() async {
     print(pecSymbolTextDisplay.message);
+    var result = await flutterTts.speak(pecSymbolTextDisplay.message);
+
+    //if (result == 1) setState(() => flutterTts = TtsState.playing);
   }
 
   sendButtonFuction() {}
 
-  deleteLastPecItem(){
+  deleteLastPecItem() {
     pecSymbolTextDisplay.deleteLast();
     displayPecWordsImages();
   }
@@ -147,7 +149,7 @@ class _PecEditorState extends State<PecEditor> {
             Icons.speaker,
             color: Colors.white,
           ),
-          onPressed: talkButtonFunction,
+          onPressed: speakButtonFunction,
           onHighlightChanged: (ispressed) {},
         ),
       ),
@@ -238,12 +240,12 @@ class _PecEditorState extends State<PecEditor> {
     Widget deleteButton = Padding(
       padding: EdgeInsets.only(left: 20.0),
       child: FlatButton(
-        child: Icon(
-          Icons.backspace,
-          color: Colors.blue,
-          size: 30.0,
-        ),
-        onPressed: deleteLastPecItem),
+          child: Icon(
+            Icons.backspace,
+            color: Colors.blue,
+            size: 30.0,
+          ),
+          onPressed: deleteLastPecItem),
     );
 
     Widget pecEditorEngineViewCollapseButton = FlatButton(
@@ -302,42 +304,42 @@ class _PecEditorState extends State<PecEditor> {
       ),
     );
 
-  //  Widget pecTabs = DefaultTabController(
-  //     length: 4,
-  //     child: TabBar(
-  //       tabs: <Widget>[
-  //         Tab(icon: Icon(Icons.ac_unit,color: Colors.blue,),),
-  //         Tab(icon: Icon(Icons.access_alarm,color: Colors.blue),),
-  //         Tab(icon: Icon(Icons.airport_shuttle,color: Colors.blue),),
-  //         Tab(icon: Icon(Icons.web,color: Colors.blue),),
-  //       ],
-  //     ),
-  //   );
+    //  Widget pecTabs = DefaultTabController(
+    //     length: 4,
+    //     child: TabBar(
+    //       tabs: <Widget>[
+    //         Tab(icon: Icon(Icons.ac_unit,color: Colors.blue,),),
+    //         Tab(icon: Icon(Icons.access_alarm,color: Colors.blue),),
+    //         Tab(icon: Icon(Icons.airport_shuttle,color: Colors.blue),),
+    //         Tab(icon: Icon(Icons.web,color: Colors.blue),),
+    //       ],
+    //     ),
+    //   );
 
     final pageController = PageController(
       initialPage: 0,
     );
 
     final pecSymbolsPageView = PageView(
-        controller: pageController,
-        children: <Widget>[
-          actionPecGridView,
-          bodyPartPecGridView,
-          clothingPecGridView,
-          feelingPecGridView
-        ],
+      controller: pageController,
+      children: <Widget>[
+        actionPecGridView,
+        bodyPartPecGridView,
+        clothingPecGridView,
+        feelingPecGridView
+      ],
     );
 
     Widget pecEditorEngineViewImagesDisplay = Expanded(
       child: Padding(
         padding: EdgeInsets.all(5), //EdgeInsets.only(bottom: 10),
         child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue, style: BorderStyle.solid),
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          child: pecSymbolsPageView//pecTabs  //####//pecGridView,
-        ),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blue, style: BorderStyle.solid),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: pecSymbolsPageView //pecTabs  //####//pecGridView,
+            ),
       ),
     );
 
@@ -351,7 +353,7 @@ class _PecEditorState extends State<PecEditor> {
             children: <Widget>[
               pecEditorEngineViewCollapseButton,
               showPecEditorEngineViewImagesDisplay ? deleteButton : Container()
-              ],
+            ],
           ),
           showPecEditorEngineViewImagesDisplay
               ? pecEditorEngineViewImagesDisplay

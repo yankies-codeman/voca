@@ -34,7 +34,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.voca"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 27
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -64,3 +64,21 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
+subprojects {
+  project.configurations.all {
+     resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex') ) {
+                details.useVersion "26.1.0"
+            }
+        }
+  }
+}
+
+// resolutionStrategy.eachDependency { details ->
+//             if (details.requested.group == 'com.android.support'
+//                     && !details.requested.name.contains('multidex') ) {
+//                 details.useVersion "26.1.0"
+//             }
+//         }

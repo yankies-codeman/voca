@@ -28,8 +28,8 @@ dependencies:
   path_provider: '>= 0.4.0'
   sqflite: any
   scoped_model: ^0.3.0
-  simple_permissions: ^0.1.9
-  flutter_tts: 
+  #simple_permissions: ^0.1.0
+  flutter_tts: ^0.1.1
 
 dev_dependencies:
   flutter_test:
