@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/SharedPrefSingleton.dart';
-import '../pages/login-page.dart';
-import '../pages/home-page.dart';
+import '../services/shared_pref_service.dart';
+import '../pages/login_page.dart';
+import '../pages/home_page.dart';
 
 
 class LandingPage extends StatefulWidget {
@@ -34,6 +34,22 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // if (sharedPrefResponseReceived) {
+    //   return SafeArea(
+    //     child: Container(
+    //       child: isLoggedIn ? HomePage() : LoginPage(),
+    //     ),
+    //     bottom: true,
+    //     top: false,
+    //     left: true,
+    //     right: true,
+    //   );
+    // } else {
+    //   return Container(
+    //     child: Center(),
+    //   );
+    // }
       
       if(sharedPrefResponseReceived)
       {

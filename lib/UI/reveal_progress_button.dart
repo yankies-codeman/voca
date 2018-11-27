@@ -4,7 +4,7 @@ import '../models/voca_user.dart';
 import 'package:fluro/fluro.dart';
 import '../UI/progress_button.dart';
 import '../UI/reveal_progress_button_painter.dart';
-import '../services/navigation.dart';
+import '../services/navigation_service.dart';
 
 
 

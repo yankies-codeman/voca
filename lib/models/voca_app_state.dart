@@ -41,6 +41,7 @@ class VocaAppState extends Model {
 
   set setEmergencyContacts(List<EmergencyContact> value) {
     _emergencyContacts = value;
+    notifyListeners();
   }
 
   bool get isGettingContacts => _isGettingContacts;

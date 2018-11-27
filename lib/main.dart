@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './pages/landing-page.dart';
-import './services/navigation.dart';
+import './pages/landing_page.dart';
+import './services/navigation_service.dart';
 
 // import './pages/login-page.dart';
 // import './pages/home-page.dart';

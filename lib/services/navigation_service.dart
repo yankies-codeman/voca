@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 // import 'package:progress_button/page_two.dart';
 // import 'package:progress_button/home_page.dart';
 
-import '../pages/login-page.dart';
-import '../pages/home-page.dart';
-import '../pages/signUp-page.dart';
-import '../pages/landing-page.dart';
+import '../pages/login_page.dart';
+import '../pages/home_page.dart';
+import '../pages/sign_up_page.dart';
+import '../pages/landing_page.dart';
 
 
 class Navigation {

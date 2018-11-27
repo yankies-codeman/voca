@@ -12,10 +12,10 @@ final EmergencyContact _savedEmergencyContact;
    return ListTile(
       leading: new CircleAvatar(
         backgroundColor: Colors.blue,
-        child: new Text(_savedEmergencyContact.nameLeadingAlphabet)
+        child: new Text(_savedEmergencyContact.nameLeadingAlphabet.toString())
       ),
-      title: new Text(_savedEmergencyContact.name + "(" + _savedEmergencyContact.relationship + ")"),
-      subtitle: new Text(_savedEmergencyContact.phoneNumber)
+      title: new Text(_savedEmergencyContact.name.toString() + " (" + _savedEmergencyContact.relationship.toString() + ")"),
+      subtitle: new Text(_savedEmergencyContact.phoneNumber.toString())
     );
   }
 }

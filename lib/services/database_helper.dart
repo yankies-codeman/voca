@@ -124,7 +124,6 @@ class DatabaseHelper {
     result.toList().forEach((res) {
       DeviceContact contact = DeviceContact.fromMap(res);
       savedSyncedContacts.add(contact);
-      // print(contact.nameLeadingAlphabet + ' ===>> ' + contact.displayName);
     });
 
     return savedSyncedContacts;
@@ -149,19 +148,26 @@ class DatabaseHelper {
     return DeviceContact.fromMap(result.first);
   }
 
-  Future<int> addEmergencyContact (EmergencyContact contact) async{
-     var dbClient = await db;
-     var result = dbClient.insert("VocaEmergencyContacts", contact.toMap());
-    print(result);
+  Future<int> addEmergencyContact(EmergencyContact contact) async {
+    print('In database helper => Inserting: ' +
+        contact.name +
+        ' ' +
+        contact.phoneNumber +
+        ' ' +
+        contact.relationship);
+    var dbClient = await db;
+    var result = dbClient.insert("VocaEmergencyContacts", contact.toMap());
+    print("Now the result]]>");
+    print(result.toString());
     return result;
   }
 
-  Future<List<EmergencyContact>> retrieveEmergencyContacts() async{
+  Future<List<EmergencyContact>> retrieveEmergencyContacts() async {
     List<EmergencyContact> savedEmergencyContacts = [];
 
     var dbClient = await db;
-    var result = await dbClient
-        .query("VocaEmergencyContacts", columns: ['id', 'Contact', 'Relationship']);
+    var result = await dbClient.query("VocaEmergencyContacts",
+        columns: ['id', 'Contact','Name', 'Relationship']);
 
     result.toList().forEach((res) {
       EmergencyContact contact = EmergencyContact.fromMap(res);

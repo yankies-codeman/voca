@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/contactsService.dart';
+import '../services/contacts_service.dart';
 import '../models/device_contact.dart';
 import '../ui/contact_list_item.dart';
 import '../models/voca_app_state.dart';

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import '../models/message_list_display_item.dart';
 import '../ui/message_list_item.dart';
 
-class MessagesPage extends StatefulWidget {
+class ChatsPage extends StatefulWidget {
   final List<MessageListDisplayItem> messagesList;
 
-  MessagesPage(this.messagesList);
+  ChatsPage(this.messagesList);
 
-  _MessagesPageState createState() => _MessagesPageState();
+  _ChatsPageState createState() => _ChatsPageState();
 }
 
-class _MessagesPageState extends State<MessagesPage> {
+class _ChatsPageState extends State<ChatsPage> {
   List<MessageListDisplayItem> _messagesList;
 
   @override

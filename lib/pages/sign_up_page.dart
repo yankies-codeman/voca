@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/SharedPrefSingleton.dart';
+import '../services/shared_pref_service.dart';
 import '../models/voca_user.dart';
 import '../UI/reveal_progress_button.dart';
 

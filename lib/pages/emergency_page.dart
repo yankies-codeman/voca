@@ -3,6 +3,7 @@ import '../models/emergency_contact.dart';
 import '../models/voca_app_state.dart';
 import 'package:scoped_model/scoped_model.dart';
 import '../ui/emergency_contact_list_item.dart';
+import '../services/emergency_contact_service.dart';
 
 class EmergencyPage extends StatefulWidget {
 
@@ -12,11 +13,14 @@ class EmergencyPage extends StatefulWidget {
 
 class _EmergencyPageState extends State<EmergencyPage> {
   EmergencyContact contact;
+  EmergencyContactService emergencyContactService;
 
   @override
   void initState() {
-    contact = EmergencyContact();
+   
     super.initState();
+     contact = EmergencyContact();
+     emergencyContactService = EmergencyContactService();
   }
 
   @override
@@ -46,14 +50,6 @@ class _EmergencyPageState extends State<EmergencyPage> {
       return contactList;
     }
 
-    showForm(bool showform){
-      if(showform){
-        
-      }
-    }
-
-   
-
     return ScopedModelDescendant<VocaAppState>(
         builder: (context, child, model) => Column(
           children: <Widget>[
@@ -64,5 +60,22 @@ class _EmergencyPageState extends State<EmergencyPage> {
               ),
             
             ]));
+
+    // return FutureBuilder(
+    //   future: emergencyContactService.getSavedEmergencyContacts(),
+    //   builder: (context,snapshot){
+    //     if(snapshot.hasData){
+    //       return Text("Loading...");
+    //     }
+    //     if(snapshot.hasError){
+    //       return Center(
+    //         child: Text(snapshot.error.toString()),
+    //       );  
+    //     }
+    //     return showEmergencyContactList(snapshot.data);
+    //   },
+    // );
+
+
   }
 }
