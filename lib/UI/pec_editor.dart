@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../models/pec_word_image.dart';
 import '../services/pec_service.dart';
 import '../UI/pec_grid_item.dart';
 import '../models/pec_symbol_text_display.dart';
+
 
 class PecEditor extends StatefulWidget {
   final String _requestPage;
@@ -23,6 +25,7 @@ class _PecEditorState extends State<PecEditor> {
   PecSymbolTextDisplay pecSymbolTextDisplay;
   List<PecWordImage> pecWordsImages;
   List<Widget> selectedSymbolWordCards;
+  FlutterTts flutterTts;
   //AnimationController animationController ;  //with TickerProviderStateMixin
   //Animation animation;
 
@@ -38,6 +41,7 @@ class _PecEditorState extends State<PecEditor> {
     pecSymbolTextDisplay = PecSymbolTextDisplay();
     selectedSymbolWordCards = List<Widget>();
     requestPage = widget._requestPage;
+    flutterTts = new FlutterTts();
 
     // animationController = AnimationController(duration: Duration(microseconds: 300),vsync: this);
     // animation = Tween(begin: 0.0,end: 1.0).animate(animationController);

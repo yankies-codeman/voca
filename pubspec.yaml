@@ -28,6 +28,8 @@ dependencies:
   path_provider: '>= 0.4.0'
   sqflite: any
   scoped_model: ^0.3.0
+  simple_permissions: ^0.1.9
+  flutter_tts: 
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +61,66 @@ flutter:
   uses-material-design: true
   assets:
    - assets/images/robot.png
+   
+   #PEC SYMBOLS(ACTIONS)
+   - assets/pecsymbols/action/ask.PNG
+   - assets/pecsymbols/action/bathe.PNG
+   - assets/pecsymbols/action/bodyShakes.PNG
+   - assets/pecsymbols/action/breathe.PNG
+   - assets/pecsymbols/action/bring.PNG
+   - assets/pecsymbols/action/buy.PNG
+   - assets/pecsymbols/action/clap.PNG
+   - assets/pecsymbols/action/carry.PNG
+   - assets/pecsymbols/action/change clothes.PNG
+   - assets/pecsymbols/action/check messages.PNG
+   - assets/pecsymbols/action/choke.PNG
+   - assets/pecsymbols/action/clean up.PNG
+   - assets/pecsymbols/action/come.PNG
+   - assets/pecsymbols/action/congratulations.PNG
+   - assets/pecsymbols/action/dance.PNG
+   - assets/pecsymbols/action/do.PNG
+   - assets/pecsymbols/action/dont.PNG
+   - assets/pecsymbols/action/dress up.PNG
+   - assets/pecsymbols/action/drink.PNG
+   - assets/pecsymbols/action/drive.PNG
+   - assets/pecsymbols/action/eat with hands.PNG
+   - assets/pecsymbols/action/eat.PNG
+   - assets/pecsymbols/action/fight.PNG
+   - assets/pecsymbols/action/fix.PNG
+   - assets/pecsymbols/action/give.PNG
+   - assets/pecsymbols/action/go to school.PNG
+   - assets/pecsymbols/action/go.PNG
+   - assets/pecsymbols/action/help.PNG
+   - assets/pecsymbols/action/hold.PNG
+   - assets/pecsymbols/action/listen.PNG
+
+   #BODY PARTS
+   - assets/pecsymbols/body parts/ankle.PNG
+   - assets/pecsymbols/body parts/arm.PNG
+   - assets/pecsymbols/body parts/back.PNG
+   - assets/pecsymbols/body parts/breast.PNG
+   - assets/pecsymbols/body parts/buttocks.PNG
+   - assets/pecsymbols/body parts/chest.PNG
+   - assets/pecsymbols/body parts/chin.PNG
+   - assets/pecsymbols/body parts/ear.PNG
+   - assets/pecsymbols/body parts/elbow.PNG
+   - assets/pecsymbols/body parts/eye.PNG
+   - assets/pecsymbols/body parts/feet.PNG
+   - assets/pecsymbols/body parts/hand.PNG
+
+   #CLOTHING
+   - assets/pecsymbols/clothing/shirt.PNG
+   - assets/pecsymbols/clothing/shoe.PNG
+   - assets/pecsymbols/clothing/panties.PNG
+   - assets/pecsymbols/clothing/sanitary napkin.PNG
+   - assets/pecsymbols/clothing/skirt.PNG
+
+   #FEELINGS
+   - assets/pecsymbols/feelings/ashamed.PNG
+   - assets/pecsymbols/feelings/afraid.PNG
+   - assets/pecsymbols/feelings/cold1.PNG
+   - assets/pecsymbols/feelings/excited.PNG
+
   fonts:
     - family: Nunito
       fonts:
