@@ -55,6 +55,36 @@ class SharedPrefSingleton{
     return result;
   }
 
+  Future<String>getDeviceFcmToken() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String result = preferences.getString("DeviceFcmToken");  
+    return result;
+  }
+
+  Future<String>getCurrentChatPartnerFcmToken() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String result = preferences.getString("CurrentChatPartnerFcmToken");  
+    return result;
+  }
+
+   Future<String>getCurrentChatPartnerNumber() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String result = preferences.getString("CurrentChatPartnerNumber");  
+    return result;
+  }
+
+   Future<String>getCurrentChatPartnerName() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String result = preferences.getString("CurrentChatPartnerName");  
+    return result;
+  }
+
+   Future<String>getCurrentChatID() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String result = preferences.getString("CurrentChatID");  
+    return result;
+  }
+
   //SETTERS
    Future<bool> setUserLoggedIn() async{
    SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -99,7 +129,35 @@ class SharedPrefSingleton{
     return preferences.commit();
   }
 
+   Future<bool>setDeviceFcmToken(String _fcmToken) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("DeviceFcmToken",_fcmToken);  
+     return preferences.commit();
+  }
 
+  Future<bool>setCurrentChatPartnerFcmToken(String _fcmToken) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setString("CurrentChatPartnerFcmToken",_fcmToken);  
+    return preferences.commit();
+  }
+
+  Future<bool>setCurrentChatPartnerNumber(String _number) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+   preferences.setString("CurrentChatPartnerNumber",_number);  
+    return preferences.commit();
+  }
+
+   Future<bool>setCurrentChatPartnerName(String _name) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+   preferences.setString("CurrentChatPartnerName",_name);  
+    return preferences.commit();
+  }
+
+   Future<bool>setCurrentChatID(String _chatID) async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+     preferences.setString("CurrentChatID",_chatID);  
+    return preferences.commit();
+  }
 
 
 }

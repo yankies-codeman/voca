@@ -148,6 +148,25 @@ class DatabaseHelper {
     return DeviceContact.fromMap(result.first);
   }
 
+  Future<String> getContactName(String _phoneNumber) async {
+    var dbClient = await db;
+    var result;
+    dbClient
+        .rawQuery(
+            'SELECT * FROM SyncedContact WHERE PhoneNumber = $_phoneNumber')
+        .then((data) {
+      result = data;
+      print('database result:');
+      print(result);
+    });
+
+    if (result == null) {
+      return null;
+    }
+
+    return DeviceContact.fromMap(result.first).displayName;
+  }
+
   Future<int> addEmergencyContact(EmergencyContact contact) async {
     print('In database helper => Inserting: ' +
         contact.name +

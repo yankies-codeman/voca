@@ -29,11 +29,11 @@ class PecService {
     PecWordImage clap =
         PecWordImage('clap', 'assets/pecsymbols/action/clap.PNG');
     PecWordImage carry =
-        PecWordImage('ask', 'assets/pecsymbols/action/carry.PNG');
+        PecWordImage('carry', 'assets/pecsymbols/action/carry.PNG');
     PecWordImage change =
-        PecWordImage('change', 'assets/pecsymbols/action/change clothes.PNG');
+        PecWordImage('change clothes', 'assets/pecsymbols/action/change clothes.PNG');
     PecWordImage checkMessage =
-        PecWordImage('check', 'assets/pecsymbols/action/check messages.PNG');
+        PecWordImage('check messages', 'assets/pecsymbols/action/check messages.PNG');
     PecWordImage choke =
         PecWordImage('choke', 'assets/pecsymbols/action/choke.PNG');
     PecWordImage come =
@@ -41,9 +41,9 @@ class PecService {
     PecWordImage cleanUp =
         PecWordImage('clean up', 'assets/pecsymbols/action/clean up.PNG');
     PecWordImage congratulations = PecWordImage(
-        'congrats', 'assets/pecsymbols/action/congratulations.PNG');
+        'congratulations', 'assets/pecsymbols/action/congratulations.PNG');
     PecWordImage dance =
-        PecWordImage('ask', 'assets/pecsymbols/action/dance.PNG');
+        PecWordImage('dance', 'assets/pecsymbols/action/dance.PNG');
     PecWordImage doSome = PecWordImage('do', 'assets/pecsymbols/action/do.PNG');
     PecWordImage dont =
         PecWordImage('dont', 'assets/pecsymbols/action/dont.PNG');
@@ -93,7 +93,7 @@ class PecService {
     PecWordImage chin =
         PecWordImage('chin', 'assets/pecsymbols/body parts/chin.PNG');
     PecWordImage ear =
-        PecWordImage('ankle', 'assets/pecsymbols/body parts/ear.PNG');
+        PecWordImage('ear', 'assets/pecsymbols/body parts/ear.PNG');
     _bodyPartSymbolWordList.add(ankle);
     _bodyPartSymbolWordList.add(arm);
     _bodyPartSymbolWordList.add(back);
@@ -126,7 +126,7 @@ class PecService {
     PecWordImage afraid =
         PecWordImage('afraid', 'assets/pecsymbols/feelings/afraid.PNG');
     PecWordImage cold1 =
-        PecWordImage('cold1', 'assets/pecsymbols/feelings/cold1.PNG');
+        PecWordImage('cold', 'assets/pecsymbols/feelings/cold1.PNG');
     PecWordImage excited =
         PecWordImage('excited', 'assets/pecsymbols/feelings/excited.PNG');
     _feelingSymbolWordList.add(ashamed);

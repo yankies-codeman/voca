@@ -14,7 +14,7 @@ import '../pages/emergency_page.dart';
 import '../models/device_contact.dart';
 import '../models/voca_app_state.dart';
 import '../ui/emergency_contact_form.dart';
-import '../models/message_list_display_item.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,7 +36,6 @@ class _HomePageState extends State<HomePage> {
   EmergencyContactService emergencyContactService;
   ContactService contactService;
   List<DeviceContact> refreshedContacts;
-  List<MessageListDisplayItem> refreshedMessages;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int currentPageIndex;
 
@@ -47,7 +46,7 @@ class _HomePageState extends State<HomePage> {
       emergencyPage = null;
       contactsPage = null;
       talkPage = new TalkPage();
-      chatsPage = new ChatsPage(refreshedMessages);
+      chatsPage = new ChatsPage();
       emergencyPage = new EmergencyPage();
       contactsPage = new ContactsPage();
 

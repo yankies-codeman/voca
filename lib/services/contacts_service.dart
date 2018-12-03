@@ -134,6 +134,16 @@ class ContactService {
     return deviceContacts;
   }
 
+  Future<String> getContactName(String _phoneNumber) async {
+    DatabaseHelper db = new DatabaseHelper();
+    String contactName;
+
+    await db.getContactName(_phoneNumber).then((results) {
+      contactName = results;
+    });
+    return contactName;
+  }
+
   Future<bool> syncContacts() async {
     bool result = false;
     List<DeviceContact> allDeviceContacts = [];

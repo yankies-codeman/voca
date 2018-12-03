@@ -7,6 +7,7 @@ import '../pages/login_page.dart';
 import '../pages/home_page.dart';
 import '../pages/sign_up_page.dart';
 import '../pages/landing_page.dart';
+import '../pages/chat_messages_page.dart';
 
 
 class Navigation {
@@ -25,6 +26,10 @@ class Navigation {
       ..define('/signuppage', handler: Handler(
           handlerFunc: (BuildContext context, Map<String, dynamic> params) {
         return SignUpPage();
+      }))
+      ..define('/chatmessagespage', handler: Handler(
+          handlerFunc: (BuildContext context, Map<String, dynamic> params) {
+        return ChatMessagesPage();
       }))
       ..define('/homepage', handler: Handler(
           handlerFunc: (BuildContext context, Map<String, dynamic> params) {

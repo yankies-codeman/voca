@@ -4,5 +4,6 @@ class VocaUser{
   String age;
   String phoneNumber;
   String phoneNumberComparableValue;
+  String deviceFcmToken;
 
 }

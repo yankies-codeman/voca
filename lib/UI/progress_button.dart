@@ -92,7 +92,8 @@ VocaUser _newUser;
           'Age' : _newUser.age,
           'FirstName': _newUser.firstName,
           'LastName':_newUser.lastName,
-          'PhoneNumber': _newUser.phoneNumber
+          'PhoneNumber': _newUser.phoneNumber,
+          'DeviceFcmTokem': _newUser.deviceFcmToken,
           }).then((value){
 
             prefs.setUserLoggedIn().then((result){

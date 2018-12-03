@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:fcm_push/fcm_push.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/pec_word_image.dart';
 import '../services/pec_service.dart';
 import '../UI/pec_grid_item.dart';
 import '../models/pec_symbol_text_display.dart';
+import '../services/shared_pref_service.dart';
 
 class PecEditor extends StatefulWidget {
   final String _requestPage;
@@ -25,8 +29,16 @@ class _PecEditorState extends State<PecEditor> {
   List<PecWordImage> pecWordsImages;
   List<Widget> selectedSymbolWordCards;
   FlutterTts flutterTts;
-  //AnimationController animationController ;  //with TickerProviderStateMixin
-  //Animation animation;
+  String serverKey;
+  String receipientToken;
+  FCM fcm;
+  FirebaseMessaging _firebaseMessaging;
+  String chatID;
+  String currentUserName;
+  String myNumber;
+  String currentChatPartnerNumber;
+  String currentChatPartnerName;
+  SharedPrefSingleton sharedPref;
 
   @override
   void initState() {
@@ -41,9 +53,64 @@ class _PecEditorState extends State<PecEditor> {
     selectedSymbolWordCards = List<Widget>();
     requestPage = widget._requestPage;
     flutterTts = new FlutterTts();
+    sharedPref = SharedPrefSingleton();
+    initilizeFcm();
+  }
 
-    // animationController = AnimationController(duration: Duration(microseconds: 300),vsync: this);
-    // animation = Tween(begin: 0.0,end: 1.0).animate(animationController);
+  initilizeFcm() async {
+    if (requestPage == "ChatMessages") {
+      _firebaseMessaging = FirebaseMessaging();
+      _firebaseMessaging.configure(
+        onLaunch: (Map<String,dynamic>msg){print(msg);},
+        onMessage: (Map<String,dynamic>msg){print(msg);},
+        onResume: (Map<String,dynamic>msg){print(msg);}
+      );
+      serverKey =
+          "AAAAX4ET6QQ:APA91bHe93TenaOhfM7yabRQmw1X3voABjp8_Tsmw0oyAawOb7P2eo7vIny32BS0gOmYPa4f3SyN0e8DBCwjFP7_EzovFUKCDTjX8o8K0Askc_gfcHTBYR0_lRJNY7H-urMQxslgl4GJ"; //copy and paste this
+      fcm = new FCM(serverKey);
+      myNumber = await sharedPref.getUserPhoneNumber();
+      currentChatPartnerNumber = await sharedPref.getCurrentChatPartnerNumber();
+      currentChatPartnerName = await sharedPref.getCurrentChatPartnerName();
+      currentUserName = await sharedPref.getCurrentUserFirstName();
+      receipientToken = await sharedPref.getCurrentChatPartnerFcmToken();
+      chatID = await sharedPref.getCurrentChatID();
+    }
+  }
+
+  sendButtonFuction() async {
+    if (chatID == null) {
+      chatID = myNumber + currentChatPartnerNumber;
+      Firestore.instance.collection('Chats').add({
+        'ChatID': chatID,
+        'From': myNumber,
+        'FromName':currentUserName,
+        'To': currentChatPartnerNumber,
+        'ToName': currentChatPartnerName,
+        'IsDeleted': false,
+        'Time': DateTime.now()
+      }).then((data) {
+        print("successfully added to chats");
+      });
+    }
+    Firestore.instance.collection('ChatMessages').add({
+      'ChatID': chatID,
+      'From': myNumber,    
+      'To': currentChatPartnerNumber,    
+      'Message': pecSymbolTextDisplay.message,
+      'IsRead': false,
+      'IsDeleted': false,
+      'Time': DateTime.now()
+    }).then((data) {
+      print("successfully added to chatlist");
+    });
+    final Message fcmMessage = new Message()
+      ..to = receipientToken
+      ..title = currentUserName //_config.title
+      ..body = pecSymbolTextDisplay.message; //_config.body;
+    String messageID = await fcm.send(fcmMessage);
+    print(fcmMessage);
+    print(messageID);
+
   }
 
   displayPecWordsImages() {
@@ -55,7 +122,6 @@ class _PecEditorState extends State<PecEditor> {
             child: Column(
           children: <Widget>[
             Image.asset(item.image, width: 30.0, height: 20.0),
-            //Text(item.word)
           ],
         ));
         setState(() {
@@ -104,7 +170,8 @@ class _PecEditorState extends State<PecEditor> {
     return pecList;
   }
 
-  arrangeMessage(PecWordImage pecWordImage) {
+  arrangeMessage(PecWordImage pecWordImage) async {
+    await flutterTts.speak(pecWordImage.word);
     pecSymbolTextDisplay.addNewWordImageToList(pecWordImage);
     displayPecWordsImages();
   }
@@ -115,8 +182,6 @@ class _PecEditorState extends State<PecEditor> {
 
     //if (result == 1) setState(() => flutterTts = TtsState.playing);
   }
-
-  sendButtonFuction() {}
 
   deleteLastPecItem() {
     pecSymbolTextDisplay.deleteLast();
@@ -170,7 +235,7 @@ class _PecEditorState extends State<PecEditor> {
             Icons.send,
             color: Colors.white,
           ),
-          onPressed: requestPage == 'Message' ? sendButtonFuction : null,
+          onPressed: requestPage == 'ChatMessages' ? sendButtonFuction : null,
           onHighlightChanged: (ispressed) {},
         ),
       ),

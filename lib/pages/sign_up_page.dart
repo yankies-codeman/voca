@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:permission/permission.dart';
 import '../services/shared_pref_service.dart';
 import '../models/voca_user.dart';
 import '../UI/reveal_progress_button.dart';
+
 
 
 class SignUpPage extends StatefulWidget {
@@ -12,12 +15,23 @@ class _SignUpPageState extends State<SignUpPage> {
   
   SharedPrefSingleton prefs;
   VocaUser _newVocaUser;
+  FirebaseMessaging _firebaseMessaging;
 
+  setFcmToken(){
+    _firebaseMessaging.getToken().then((value){
+      setState(() {
+              _newVocaUser.deviceFcmToken = value;
+            });
+    });
+  }
   
   @override
   initState(){
     super.initState();
+    //final result = Permission.requestSinglePermission(PermissionName.Calendar);
     _newVocaUser = new VocaUser();
+    _firebaseMessaging = FirebaseMessaging();
+    setFcmToken();
     prefs = SharedPrefSingleton().getInstance(); 
     prefs.getUserPhoneNumber().then((result){
       print(result);
@@ -79,21 +93,21 @@ class _SignUpPageState extends State<SignUpPage> {
      
     );
  
-    final saveButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: Material(
-        borderRadius : BorderRadius.circular(30.0),
-        shadowColor: Colors.lightBlueAccent.shade100,
-        //elevation: 5.0,
-        child: MaterialButton(
-          color:  Colors.lightBlueAccent,    
-          minWidth: 200.0,
-          height : 42.0,
-          onPressed: (){},         
-          child: Text('Finish!', style: TextStyle(color: Colors.white)),
-        ),  
-      ),
-    );
+    // final saveButton = Padding(
+    //   padding: EdgeInsets.symmetric(vertical: 16.0),
+    //   child: Material(
+    //     borderRadius : BorderRadius.circular(30.0),
+    //     shadowColor: Colors.lightBlueAccent.shade100,
+    //     //elevation: 5.0,
+    //     child: MaterialButton(
+    //       color:  Colors.lightBlueAccent,    
+    //       minWidth: 200.0,
+    //       height : 42.0,
+    //       onPressed: (){},         
+    //       child: Text('Finish!', style: TextStyle(color: Colors.white)),
+    //     ),  
+    //   ),
+    // );
 
     return Scaffold(
       backgroundColor: Colors.white,
