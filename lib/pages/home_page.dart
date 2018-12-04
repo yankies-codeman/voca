@@ -147,11 +147,20 @@ class _HomePageState extends State<HomePage> {
     //}).catchError((e){
     //});
 
-    _showEmergencyContactForm(context) {
+    _showEmergencyContactForm() {
       showModalBottomSheet(
           context: context,
           builder: (BuildContext context) {
             return EmergencyContactForm(_scaffoldKey,getSavedEmergencyContacts);
+          });
+    }
+
+    _showContactsInModal(){
+     
+       showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return chatsPage;
           });
     }
 
@@ -176,13 +185,16 @@ class _HomePageState extends State<HomePage> {
         syncContacts();
       }
 
+
       emergencyPageFabAction() {
         print("emergency");
         currentAppState.setAddingNewEmergencyNumber = false;
-        _showEmergencyContactForm(context);
+        _showEmergencyContactForm();
       }
 
-      messagesPageFabAction() {}
+      messagesPageFabAction() {
+      _showContactsInModal();
+      }
 
       if (currentPage == chatsPage) {
         icon = Icons.message;
